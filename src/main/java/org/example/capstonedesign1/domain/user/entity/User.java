@@ -17,6 +17,13 @@ public class User extends BaseEntity {
     private String email;
     private String password;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean registerCompleted = false;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ROLE_USER;
+
     @Embedded
     private Profile profile;
 
