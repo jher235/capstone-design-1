@@ -2,11 +2,13 @@ package org.example.capstonedesign1.global.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.capstonedesign1.global.exception.CustomException;
 
 import java.time.LocalDateTime;
 
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponseDto {
     private final String errorCode;
@@ -29,6 +31,5 @@ public class ErrorResponseDto {
                 LocalDateTime.now(),
                 null);
     }
-
 
 }
