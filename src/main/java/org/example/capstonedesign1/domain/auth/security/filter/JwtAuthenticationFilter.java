@@ -12,7 +12,7 @@ import org.example.capstonedesign1.domain.auth.jwt.BearerEncoder;
 import org.example.capstonedesign1.domain.auth.jwt.JwtProvider;
 import org.example.capstonedesign1.domain.auth.security.CustomUserDetails;
 import org.example.capstonedesign1.domain.user.entity.User;
-import org.example.capstonedesign1.domain.user.service.UserService;
+import org.example.capstonedesign1.domain.user.service.UserQueryService;
 import org.example.capstonedesign1.global.dto.ErrorResponseDto;
 import org.example.capstonedesign1.global.exception.CustomException;
 import org.example.capstonedesign1.global.exception.UnAuthenticationException;
@@ -34,7 +34,7 @@ import java.util.UUID;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             UUID userId = UUID.fromString(parsePayload(request, response));
-            User user = userService.findById(userId);
+            User user = userQueryService.findById(userId);
             CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(

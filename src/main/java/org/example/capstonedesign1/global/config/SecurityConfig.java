@@ -6,8 +6,8 @@ import org.example.capstonedesign1.domain.auth.jwt.JwtProvider;
 import org.example.capstonedesign1.domain.auth.security.CustomAuthenticationEntryPoint;
 import org.example.capstonedesign1.domain.auth.security.filter.JwtAuthenticationFilter;
 import org.example.capstonedesign1.domain.auth.security.filter.JwtLoginFilter;
-import org.example.capstonedesign1.domain.auth.service.TokenService;
-import org.example.capstonedesign1.domain.user.service.UserService;
+import org.example.capstonedesign1.domain.auth.service.TokenCommandService;
+import org.example.capstonedesign1.domain.user.service.UserQueryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +24,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final TokenService tokenService;
+    private final TokenCommandService tokenCommandService;
     private final ObjectMapper objectMapper;
     private final JwtProvider jwtProvider;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -61,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){
-        return new JwtAuthenticationFilter(jwtProvider, userService, objectMapper);
+        return new JwtAuthenticationFilter(jwtProvider, userQueryService, objectMapper);
     }
 
     @Bean
@@ -78,7 +78,7 @@ public class SecurityConfig {
 
         JwtLoginFilter jwtLoginFilter = new JwtLoginFilter(
                 authenticationManager(authenticationConfiguration),
-                tokenService,
+                tokenCommandService,
                 objectMapper);
         jwtLoginFilter.setFilterProcessesUrl("/auth/login");
         return jwtLoginFilter;

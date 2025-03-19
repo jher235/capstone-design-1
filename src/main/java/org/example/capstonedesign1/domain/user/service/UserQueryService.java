@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserQueryService {
     private final UserRepository userRepository;
 
     public User findByEmail(String email){

@@ -8,7 +8,7 @@ import org.example.capstonedesign1.domain.auth.dto.request.SignUpCompleteRequest
 import org.example.capstonedesign1.domain.auth.dto.request.SignUpRequest;
 import org.example.capstonedesign1.domain.auth.dto.response.AuthenticationResponse;
 import org.example.capstonedesign1.domain.auth.security.CustomUserDetails;
-import org.example.capstonedesign1.domain.auth.service.AuthService;
+import org.example.capstonedesign1.domain.auth.service.AuthCommandService;
 import org.example.capstonedesign1.global.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    private final AuthService authService;
+    private final AuthCommandService authCommandService;
 
     @Operation(
             summary = "로컬 회원가입 API",
@@ -30,7 +30,7 @@ public class AuthController {
     )
     @PostMapping("/sign-up")
     public ResponseEntity<ResponseDto<AuthenticationResponse>> signUp(@RequestBody @Valid SignUpRequest request){
-        AuthenticationResponse response = authService.signUp(request);
+        AuthenticationResponse response = authCommandService.signUp(request);
 
         return new ResponseEntity<>(
                 ResponseDto.res(HttpStatus.CREATED, "회원가입 성공", response), HttpStatus.CREATED);
@@ -43,7 +43,7 @@ public class AuthController {
     @PostMapping("/sign-up/complete")
     public ResponseEntity<ResponseDto<Void>> SignUpComplete(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                             @RequestBody @Valid SignUpCompleteRequest request){
-        authService.signUpComplete(customUserDetails.getUser(), request);
+        authCommandService.signUpComplete(customUserDetails.getUser(), request);
         return new ResponseEntity<>(
                 ResponseDto.res(HttpStatus.CREATED, "회원가입 완료 성공"), HttpStatus.OK);
     }
