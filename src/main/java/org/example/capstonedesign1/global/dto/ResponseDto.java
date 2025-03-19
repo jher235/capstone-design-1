@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@JsonPropertyOrder({"code", "message", "timestamp", "data"})
+@JsonPropertyOrder({"statusCode", "message", "timeStamp", "data"})
 public class ResponseDto<T> {
 
     private final String statusCode;
