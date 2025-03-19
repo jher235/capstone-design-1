@@ -40,5 +40,18 @@ public class AuthService {
         return new SignUpResponse(accessToken, user.isRegisterCompleted());
     }
 
-
+    /**
+     * 회원 정보 기입을 통해 회원가입 완료
+     * @param user
+     * @param request
+     */
+    @Transactional
+    public void signUpComplete(User user, SignUpCompleteRequest request){
+        if(user.isRegisterCompleted()){
+           throw new ConflictException(ErrorCode.ALREADY_REGISTER_COMPLETED);
+        }
+        Profile profile = Profile.from(request);
+        user.signUpComplete(profile);
+        userRepository.save(user);
+    }
 }
