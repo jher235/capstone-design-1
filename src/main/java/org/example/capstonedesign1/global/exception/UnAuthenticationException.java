@@ -2,12 +2,12 @@ package org.example.capstonedesign1.global.exception;
 
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
 
-public class AuthenticationException extends CustomException{
-    public AuthenticationException(ErrorCode errorCode) {
+public class UnAuthenticationException extends CustomException{
+    public UnAuthenticationException(ErrorCode errorCode) {
         super(errorCode);
     }
 
-    public AuthenticationException(ErrorCode errorCode, String detail) {
+    public UnAuthenticationException(ErrorCode errorCode, String detail) {
         super(errorCode, detail);
     }
 }
