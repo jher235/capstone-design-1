@@ -1,6 +1,8 @@
 package org.example.capstonedesign1.domain.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.capstonedesign1.domain.auth.dto.request.LoginRequest;
@@ -28,6 +30,10 @@ public class AuthController {
             summary = "로컬 회원가입 API",
             description = "이메일과 비밀번호를 사용하여 새로운 회원을 등록"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "4090", description = "이메일 중복")
+    })
     @PostMapping("/sign-up")
     public ResponseEntity<ResponseDto<AuthenticationResponse>> signUp(@RequestBody @Valid SignUpRequest request){
         AuthenticationResponse response = authCommandService.signUp(request);
@@ -40,6 +46,10 @@ public class AuthController {
             summary = "회원가입 완료 API",
             description = "프로필 정보를 입력받아 회원가입 완료"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원가입 완료 성공"),
+            @ApiResponse(responseCode = "4091", description = "이미 로그인 완료한 사용자인 경우")
+    })
     @PostMapping("/sign-up/complete")
     public ResponseEntity<ResponseDto<Void>> SignUpComplete(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                             @RequestBody @Valid SignUpCompleteRequest request){
@@ -52,6 +62,10 @@ public class AuthController {
             summary = "로그인 API",
             description = "이메일과 비밀번호를 사용하여 로그인"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "4010", description = "로그인 실패"),
+    })
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody @Valid LoginRequest request){
 
