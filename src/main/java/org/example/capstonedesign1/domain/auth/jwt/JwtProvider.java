@@ -7,25 +7,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
-public class JwtUtil {
-    private static final String TOKEN_TYPE = "Bearer ";
+public class JwtProvider {
     private final SecretKey secretKey;
     private final long validityInMilliseconds;
 
-    public JwtUtil(@Value("${jwt.access-token.secret}") final String secretKey,
-                   @Value("${jwt.access-token.expired-time}") final long validityInMilliseconds){
+    public JwtProvider(@Value("${jwt.access-token.secret}") final String secretKey,
+                       @Value("${jwt.access-token.expired-time}") final long validityInMilliseconds){
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.validityInMilliseconds = validityInMilliseconds;
     }
 
     public String issueAccessToken(String subject){
         String accessToken = createAccessToken(subject);
-        return encodeJwtToken(accessToken);
+        return BearerEncoder.encode(accessToken);
     }
 
     public String createAccessToken(String subject){
@@ -39,16 +37,20 @@ public class JwtUtil {
                 .compact();
     }
 
-    boolean isExpired(String token){
+    public boolean isExpired(String token){
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token)
                 .getPayload()
                 .getExpiration()
                 .before(new Date());
     }
 
-    public String encodeJwtToken(String token){
-        String bearerToken = TOKEN_TYPE + token;
-        return URLEncoder.encode(bearerToken, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+    public String parsePayload(String token){
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
 }
