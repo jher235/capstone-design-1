@@ -13,6 +13,6 @@ public class PropensityQuestion extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PropensityQuestionOption> options = new ArrayList<>();
 }
