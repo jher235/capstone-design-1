@@ -4,16 +4,14 @@ package org.example.capstonedesign1.domain.user.entity;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.capstonedesign1.domain.auth.dto.request.SignUpCompleteRequest;
 import org.example.capstonedesign1.domain.user.entity.enums.Gender;
 import org.example.capstonedesign1.domain.user.entity.enums.Status;
 
 import java.time.LocalDate;
 
+@Getter
 @Embeddable
 @Builder
 @AllArgsConstructor
