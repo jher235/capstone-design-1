@@ -79,7 +79,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
             return objectMapper.readValue(request.getInputStream(), LoginRequest.class);
         } catch (IOException e) {
             log.error("errorMessage: {}", e.getMessage());
-            throw new BadRequestException(ErrorCode.JSON_PARSE_ERROR, e.getMessage());
+            throw new BadRequestException(ErrorCode.INVALID_JSON_REQUEST, e.getMessage());
         }
     }
 
