@@ -1,9 +1,10 @@
 package org.example.capstonedesign1.domain.propensity.dto.response;
 
 
+import org.example.capstonedesign1.domain.propensity.dto.json.PropensityAnalysis;
 
-public record PropensityAnalysisResponse(String type,
-                                         String description,
-                                         String prosAndCons,
-                                         String precaution) {
+import java.util.UUID;
+
+public record PropensityAnalysisResponse(UUID id,
+                                         PropensityAnalysis propensityAnalysis) {
 }
