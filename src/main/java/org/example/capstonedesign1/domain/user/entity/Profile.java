@@ -27,6 +27,8 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String propensity;
+
     public static Profile from(SignUpCompleteRequest request){
         return Profile.builder()
                 .nickname(request.getNickname())
