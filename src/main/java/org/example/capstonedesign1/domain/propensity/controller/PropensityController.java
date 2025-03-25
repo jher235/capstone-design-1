@@ -59,7 +59,6 @@ public class PropensityController {
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 성공", response), HttpStatus.OK);
     }
 
-
     @Operation(
             summary = "금융 성향 분석 목록 조회 API",
             description = "금융 성향 분석 목록을 조회하는 api"
@@ -75,6 +74,22 @@ public class PropensityController {
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 목록 조회 성공", response), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "금융 성향 분석 상세 조회 API",
+            description = "기존에 받았던 금융 성향 분석 결과를 상세 조회하는 api"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "금융 성향 분석 상세 조회 성공"),
+            @ApiResponse(responseCode = "4041", description = "요청한 금융 성향 분석을 찾을 수 없는 경우"),
+            @ApiResponse(responseCode = "4030", description = "요청한 금융 성향 분석이 사용자의 분석 결과가 아닌 경우"),
+    })
+    @GetMapping("/analysis/{userPropensityId}")
+    public ResponseEntity<ResponseDto<PropensityAnalysisResponse>> getUserPropensity(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable(name = "userPropensityId") UUID userPropensityId){
+        PropensityAnalysisResponse response = propensityQueryService.getUserPropensity(userDetails.getUser(), userPropensityId);
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 상세 조회 성공", response), HttpStatus.OK);
+    }
 
 
 }
