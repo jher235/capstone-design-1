@@ -25,7 +25,7 @@ public class UserCommandService {
     @Transactional
     public void updatePropensity(User user, UUID userPropensityId){
         UserPropensity userPropensity = propensityQueryService.findUserPropensityById(userPropensityId);
-        if(!userQueryService.isSameUser(user, userPropensity)){
+        if(!userQueryService.isSameUser(user, userPropensity.getUser())){
             throw new AuthorizedException(ErrorCode.UN_AUTHORIZED);
         }
 
