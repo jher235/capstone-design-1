@@ -12,6 +12,7 @@ import org.example.capstonedesign1.domain.propensity.dto.response.SurveyResponse
 import org.example.capstonedesign1.domain.propensity.service.PropensityCommandService;
 import org.example.capstonedesign1.domain.propensity.service.PropensityQueryService;
 import org.example.capstonedesign1.domain.user.service.UserCommandService;
+import org.example.capstonedesign1.global.dto.PaginationResponse;
 import org.example.capstonedesign1.global.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,26 +54,25 @@ public class PropensityController {
     @PostMapping
     public ResponseEntity<ResponseDto<PropensityAnalysisResponse>> postSurvey(@Valid @RequestBody SurveyRequest request,
                                                                               @AuthenticationPrincipal CustomUserDetails userDetails){
-        PropensityAnalysisResponse response =  propensityCommandService.submitSurvey(userDetails.getUser(), request);
+        PropensityAnalysisResponse response = propensityCommandService.submitSurvey(userDetails.getUser(), request);
 
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 성공", response), HttpStatus.OK);
     }
 
+
     @Operation(
-            summary = "금융 성향 업데이트 API",
-            description = "유저의 금융 성향을 업데이트하는 api"
+            summary = "금융 성향 분석 목록 조회 API",
+            description = "금융 성향 분석 목록을 조회하는 api"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "금융 성향 업데이트 성공"),
-            @ApiResponse(responseCode = "4041", description = "요청한 금융 성향 분석을 찾을 수 없는 경우"),
-            @ApiResponse(responseCode = "4030", description = "요청한 금융 성향 분석이 사용자의 분석 결과가 아닌 경우"),
+            @ApiResponse(responseCode = "200", description = "금융 성향 분석 목록 조회 성공"),
     })
-    @PostMapping("/{userPropensityId}")
-    public ResponseEntity<ResponseDto<Void>> postSurvey(@PathVariable UUID userPropensityId,
-                                                        @AuthenticationPrincipal CustomUserDetails userDetails){
-        userCommandService.updatePropensity(userDetails.getUser(), userPropensityId);
-
-        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 업데이트 성공"), HttpStatus.OK);
+    @GetMapping("/analysis")
+    public ResponseEntity<ResponseDto<PaginationResponse>> getUserPropensities(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                 @RequestParam(name ="page", defaultValue = "0") int page,
+                                                                 @RequestParam(name ="size", defaultValue = "10") int size){
+        PaginationResponse response = propensityQueryService.getUserPropensities(userDetails.getUser(), page, size);
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 목록 조회 성공", response), HttpStatus.OK);
     }
 
 
