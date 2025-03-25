@@ -15,7 +15,7 @@ import java.util.UUID;
 @Repository
 public interface UserPropensityRepository extends JpaRepository<UserPropensity, UUID> {
 
-    @Query("select up.id as id, up.propensity as propensity " +
+    @Query("select up.id as id, up.propensity as propensity, up.createdAt as createdAt " +
             "from UserPropensity up " +
             "where up.user = :user ")
     Page<UserPropensityPreview> findUserPropensityPreviews(@Param("user") User user, Pageable pageable);

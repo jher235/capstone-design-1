@@ -41,7 +41,7 @@ public class PropensityCommandService {
                 PropensityAnalysis.class, content);
         UserPropensity userPropensity = new UserPropensity(user, propensityAnalysis.type(), content);
         userPropensityRepository.save(userPropensity);
-        return new PropensityAnalysisResponse(userPropensity.getId(), propensityAnalysis);
+        return new PropensityAnalysisResponse(userPropensity.getId(), propensityAnalysis, userPropensity.getCreatedAt());
     }
 
 }

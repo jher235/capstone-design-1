@@ -63,7 +63,7 @@ public class PropensityQueryService {
         PropensityAnalysis propensityAnalysis = JsonUtil.parseClass(
                 PropensityAnalysis.class, userPropensity.getContent());
 
-        return new PropensityAnalysisResponse(userPropensity.getId(), propensityAnalysis);
+        return new PropensityAnalysisResponse(userPropensity.getId(), propensityAnalysis, userPropensity.getCreatedAt());
     }
 
 }
