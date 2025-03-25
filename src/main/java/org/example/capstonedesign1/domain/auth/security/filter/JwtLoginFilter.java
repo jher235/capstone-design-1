@@ -1,7 +1,6 @@
 package org.example.capstonedesign1.domain.auth.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,19 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.capstonedesign1.domain.auth.dto.request.LoginRequest;
 import org.example.capstonedesign1.domain.auth.dto.response.AuthenticationResponse;
 import org.example.capstonedesign1.domain.auth.security.CustomUserDetails;
-import org.example.capstonedesign1.domain.auth.service.AuthService;
-import org.example.capstonedesign1.domain.auth.service.TokenService;
+import org.example.capstonedesign1.domain.auth.service.TokenCommandService;
 import org.example.capstonedesign1.domain.user.entity.User;
-import org.example.capstonedesign1.domain.user.service.UserService;
 import org.example.capstonedesign1.global.dto.ErrorResponseDto;
 import org.example.capstonedesign1.global.dto.ResponseDto;
 import org.example.capstonedesign1.global.exception.BadRequestException;
 import org.example.capstonedesign1.global.exception.UnAuthenticationException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,7 +31,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
+    private final TokenCommandService tokenCommandService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -58,7 +53,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         User user = customUserDetails.getUser();
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse(
-                tokenService.issueAccessToken(user.getId().toString()), user.isRegisterCompleted());
+                tokenCommandService.issueAccessToken(user.getId().toString()), user.isRegisterCompleted());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
@@ -84,7 +79,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
             return objectMapper.readValue(request.getInputStream(), LoginRequest.class);
         } catch (IOException e) {
             log.error("errorMessage: {}", e.getMessage());
-            throw new BadRequestException(ErrorCode.JSON_PARSE_ERROR, e.getMessage());
+            throw new BadRequestException(ErrorCode.INVALID_JSON_REQUEST, e.getMessage());
         }
     }
 

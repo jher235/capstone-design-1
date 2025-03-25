@@ -5,6 +5,8 @@ import lombok.*;
 import org.example.capstonedesign1.domain.user.entity.enums.Role;
 import org.example.capstonedesign1.global.common.BaseEntity;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -34,6 +36,26 @@ public class User extends BaseEntity {
     public void signUpComplete(Profile profile){
         this.profile = profile;
         this.registerCompleted = true;
+    }
+
+    public void updatePropensity(String propensity){
+        this.profile.updatePropensity(propensity);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User that)) {
+            return false;
+        }
+        return Objects.equals(that.getId(), this.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getId());
     }
 
 }

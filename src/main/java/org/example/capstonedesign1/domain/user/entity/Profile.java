@@ -4,16 +4,14 @@ package org.example.capstonedesign1.domain.user.entity;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.capstonedesign1.domain.auth.dto.request.SignUpCompleteRequest;
 import org.example.capstonedesign1.domain.user.entity.enums.Gender;
 import org.example.capstonedesign1.domain.user.entity.enums.Status;
 
 import java.time.LocalDate;
 
+@Getter
 @Embeddable
 @Builder
 @AllArgsConstructor
@@ -29,6 +27,8 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String propensity;
+
     public static Profile from(SignUpCompleteRequest request){
         return Profile.builder()
                 .nickname(request.getNickname())
@@ -38,6 +38,10 @@ public class Profile {
                 .asset(request.getAsset())
                 .status(Status.ACTIVE)
                 .build();
+    }
+
+    public void updatePropensity(String propensity){
+        this.propensity = propensity;
     }
 
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TokenService {
+public class TokenCommandService {
     private final JwtProvider jwtProvider;
     public String issueAccessToken(String subject){
         return jwtProvider.issueAccessToken(subject);

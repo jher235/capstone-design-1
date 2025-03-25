@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthCommandService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final TokenService tokenService;
+    private final TokenCommandService tokenCommandService;
 
 
     /**
@@ -33,7 +33,7 @@ public class AuthService {
 
         User user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-        String accessToken = tokenService.issueAccessToken(user.getId().toString());
+        String accessToken = tokenCommandService.issueAccessToken(user.getId().toString());
         return new AuthenticationResponse(accessToken, user.isRegisterCompleted());
     }
 
