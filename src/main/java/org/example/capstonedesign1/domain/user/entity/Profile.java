@@ -40,4 +40,8 @@ public class Profile {
                 .build();
     }
 
+    public void updatePropensity(String propensity){
+        this.propensity = propensity;
+    }
+
 }

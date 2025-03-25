@@ -1,9 +1,6 @@
 package org.example.capstonedesign1.domain.propensity.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +14,7 @@ import org.example.capstonedesign1.global.common.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPropensity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     User user;
 
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false) // 굳이 연관관계 매핑을 하지 않아도 무방하다고 판단.
