@@ -1,6 +1,7 @@
 package org.example.capstonedesign1.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.capstonedesign1.domain.propensity.entity.UserPropensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.repository.UserRepository;
 import org.example.capstonedesign1.global.exception.NotFoundException;
@@ -22,5 +23,9 @@ public class UserQueryService {
     public User findById(UUID id){
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public boolean isSameUser(User user, UserPropensity userPropensity){
+        return userPropensity.getUser().equals(user);
     }
 }

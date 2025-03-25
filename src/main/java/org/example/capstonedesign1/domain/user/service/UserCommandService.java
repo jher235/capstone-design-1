@@ -17,6 +17,7 @@ import java.util.UUID;
 public class UserCommandService {
 
     private final PropensityQueryService propensityQueryService;
+    private final UserQueryService userQueryService;
 
     private final UserRepository userRepository;
 
@@ -24,7 +25,7 @@ public class UserCommandService {
     @Transactional
     public void updatePropensity(User user, UUID userPropensityId){
         UserPropensity userPropensity = propensityQueryService.findUserPropensityById(userPropensityId);
-        if(!isSameUser(user, userPropensity)){
+        if(!userQueryService.isSameUser(user, userPropensity)){
             throw new AuthorizedException(ErrorCode.UN_AUTHORIZED);
         }
 
@@ -32,8 +33,4 @@ public class UserCommandService {
         userRepository.save(user);
     }
 
-
-    private boolean isSameUser(User user, UserPropensity userPropensity){
-        return userPropensity.getUser().equals(user);
-    }
 }
