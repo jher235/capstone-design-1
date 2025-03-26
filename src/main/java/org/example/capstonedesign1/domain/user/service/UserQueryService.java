@@ -25,7 +25,7 @@ public class UserQueryService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public boolean isSameUser(User user, UserPropensity userPropensity){
-        return userPropensity.getUser().equals(user);
+    public boolean isSameUser(User userA, User userB){
+        return userA.equals(userB);
     }
 }
