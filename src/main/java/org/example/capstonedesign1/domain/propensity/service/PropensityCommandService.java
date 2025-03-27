@@ -8,9 +8,8 @@ import org.example.capstonedesign1.domain.chat.dto.response.OpenAiResponse;
 import org.example.capstonedesign1.domain.propensity.dto.json.PropensityAnalysis;
 import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
 import org.example.capstonedesign1.domain.propensity.dto.response.PropensityAnalysisResponse;
-import org.example.capstonedesign1.domain.propensity.entity.Propensity;
 import org.example.capstonedesign1.domain.propensity.entity.UserPropensity;
-import org.example.capstonedesign1.domain.propensity.repository.PropensityRepository;
+import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.propensity.repository.UserPropensityRepository;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.global.template.PromptTemplate;
@@ -41,7 +40,7 @@ public class PropensityCommandService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         PropensityAnalysis propensityAnalysis = JsonUtil.parseClass(PropensityAnalysis.class, content);
-        Propensity propensity = propensityQueryService.findByName(propensityAnalysis.type());
+        Propensity propensity = Propensity.findByName(propensityAnalysis.type());
         UserPropensity userPropensity = new UserPropensity(user, propensity, content);
         userPropensityRepository.save(userPropensity);
         return new PropensityAnalysisResponse(userPropensity.getId(), propensityAnalysis, userPropensity.getCreatedAt());

@@ -2,7 +2,7 @@ package org.example.capstonedesign1.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.capstonedesign1.domain.propensity.entity.Propensity;
+import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.enums.Role;
 import org.example.capstonedesign1.global.common.BaseEntity;
 

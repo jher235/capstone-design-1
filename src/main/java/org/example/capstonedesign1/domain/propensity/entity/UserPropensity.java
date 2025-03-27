@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.global.common.BaseEntity;
 
@@ -17,8 +18,12 @@ public class UserPropensity extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "propensity_id")
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "propensity_id")
+//    private Propensity propensity;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Propensity propensity;
 
     @Column(nullable = false, columnDefinition = "JSON")
