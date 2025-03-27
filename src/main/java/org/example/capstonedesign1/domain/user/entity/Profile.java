@@ -1,11 +1,10 @@
 package org.example.capstonedesign1.domain.user.entity;
 
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 import org.example.capstonedesign1.domain.auth.dto.request.SignUpCompleteRequest;
+import org.example.capstonedesign1.domain.propensity.entity.Propensity;
 import org.example.capstonedesign1.domain.user.entity.enums.Gender;
 import org.example.capstonedesign1.domain.user.entity.enums.Status;
 
@@ -27,7 +26,12 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private String propensity;
+//    private String propensity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "propensity_id")
+    private Propensity propensity;
+
 
     public static Profile from(SignUpCompleteRequest request){
         return Profile.builder()
@@ -40,7 +44,10 @@ public class Profile {
                 .build();
     }
 
-    public void updatePropensity(String propensity){
+//    public void updatePropensity(String propensity){
+//        this.propensity = propensity;
+//    }
+    public void updatePropensity(Propensity propensity){
         this.propensity = propensity;
     }
 

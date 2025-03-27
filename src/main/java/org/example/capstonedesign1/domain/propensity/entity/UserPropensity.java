@@ -15,14 +15,12 @@ import org.example.capstonedesign1.global.common.BaseEntity;
 public class UserPropensity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false) // 굳이 연관관계 매핑을 하지 않아도 무방하다고 판단.
-//    Propensity propensity;
-
-    @Column(nullable = false)
-    String propensity;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "propensity_id")
+    private Propensity propensity;
 
     @Column(nullable = false, columnDefinition = "JSON")
-    String content;
+    private String content;
 }
