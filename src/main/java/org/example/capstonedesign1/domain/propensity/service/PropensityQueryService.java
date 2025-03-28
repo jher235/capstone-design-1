@@ -6,11 +6,9 @@ import org.example.capstonedesign1.domain.propensity.dto.json.PropensityAnalysis
 import org.example.capstonedesign1.domain.propensity.dto.response.PropensityAnalysisResponse;
 import org.example.capstonedesign1.domain.propensity.dto.response.SurveyResponse;
 import org.example.capstonedesign1.domain.propensity.dto.response.projection.UserPropensityPreview;
-import org.example.capstonedesign1.domain.propensity.entity.Propensity;
 import org.example.capstonedesign1.domain.propensity.entity.PropensityQuestion;
 import org.example.capstonedesign1.domain.propensity.entity.UserPropensity;
 import org.example.capstonedesign1.domain.propensity.repository.PropensityQuestionRepository;
-import org.example.capstonedesign1.domain.propensity.repository.PropensityRepository;
 import org.example.capstonedesign1.domain.propensity.repository.UserPropensityRepository;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
@@ -36,12 +34,7 @@ public class PropensityQueryService {
     private final PropensityQuestionRepository propensityQuestionRepository;
     private final UserPropensityRepository userPropensityRepository;
     private final UserQueryService userQueryService;
-    private final PropensityRepository propensityRepository;
 
-    public Propensity findByName(String name){
-        return propensityRepository.findByName(name).orElseThrow(()
-                -> new NotFoundException(ErrorCode.PROPENSITY_NOT_FOUND));
-    }
 
     public SurveyResponse getSurvey(){
         List<PropensityQuestion> questions = propensityQuestionRepository.findAllWithOptions();
