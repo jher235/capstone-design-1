@@ -35,6 +35,12 @@ public class BankProductCommandService {
 
     private final OpenAiApiClient openAiApiClient;
 
+    /**
+     * 유저의 성향, 추천 요구사항에 맞는 상품 목록들을 DB에서 가져온 후 유저 정보와 금융 상품 목록을 바탕으로 금융 상품 추천 진행
+     * @param user
+     * @param request
+     * @return
+     */
     public BankProductRecommendationResponse recommendBankProduct(User user, BankProductRecommendRequest request){
         Propensity propensity = userQueryService.ensureUserPropensity(user);
 
@@ -42,13 +48,12 @@ public class BankProductCommandService {
                 bankProductRepository.findRecommendable(propensity, request.getAmount(), request.getTerm());
 
         String requestMessage = PromptTemplate.BankProductRecommendPrompt(user, request, bankProducts);
-        OpenAiResponse response =  openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
+        String content = openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
 
-        String content = response.getChoices().get(0).getMessage().getContent().trim();
-
-        BankProductRecommendation recommendation = new BankProductRecommendation(user, content);
         BankProductRecommendationContent bankProductRecommendationContent =
                 JsonUtil.parseClass(BankProductRecommendationContent.class, content);
+
+        BankProductRecommendation recommendation = new BankProductRecommendation(user, content);
         bankProductRecommendationRepository.save(recommendation);
         return new BankProductRecommendationResponse(recommendation.getId(),
                 bankProductRecommendationContent,

@@ -35,9 +35,7 @@ public class PropensityCommandService {
                 user.getProfile().getGender().toString(),
                 request.getSurveyEntries());
 
-        OpenAiResponse response =  openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)) );
-
-        String content = response.getChoices().get(0).getMessage().getContent().trim();
+        String content =  openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
 
         PropensityAnalysis propensityAnalysis = JsonUtil.parseClass(PropensityAnalysis.class, content);
         Propensity propensity = Propensity.findByName(propensityAnalysis.type());
