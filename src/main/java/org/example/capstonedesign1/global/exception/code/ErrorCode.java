@@ -15,6 +15,7 @@ public enum ErrorCode {
     EMAIL("4004", "이메일 형식이 유효하지 않습니다."),
     NOT_NULL("4005", "필수값이 공백입니다."),
     INVALID_JSON_REQUEST("4006", "JSON 파싱 시 오류가 발생했습니다."),
+    PROPENSITY_NOT_SET("4007", "아직 금융 성향 분석을 진행하지 않은 유저입니다."),
 
     USER_UNAUTHORIZED("4010", "로그인에 실패했습니다."),
     EXPIRED_JWT_TOKEN("4011", "만료된 JWT 토큰입니다."),
