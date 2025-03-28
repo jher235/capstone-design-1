@@ -1,8 +1,14 @@
 package org.example.capstonedesign1.global.template;
 
+import org.example.capstonedesign1.domain.bankproduct.dto.request.BankProductRecommendRequest;
+import org.example.capstonedesign1.domain.bankproduct.entity.BankProduct;
 import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
+import org.example.capstonedesign1.domain.user.entity.Profile;
+import org.example.capstonedesign1.domain.user.entity.User;
 
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 
@@ -56,6 +62,58 @@ public class PromptTemplate {
                     "description": "<금융 성향 설명>",
                     "prosAndCons": "<금융 성향 장단점 설명>",
                     "precaution": "<해당 금융 성향인들 주의점>"
+                }
+                """
+        );
+    }
+
+    public static String BankProductRecommendPrompt(User user, BankProductRecommendRequest request, List<BankProduct> products){
+        Profile profile = user.getProfile();
+        StringBuilder stringBuilder = new StringBuilder();
+        products.stream()
+                .forEach(product -> stringBuilder.append(product.toString()).append("\n\n"));
+        return fillTemplate(
+                """
+                ## 명령
+                사용자 정보와 사용자의 요구사항을 기반으로 금융 상품을 추천해줘.
+                금융 상품 목록은 DB 내의 사용자 금융 성향과 일치하는 상품들을 분류해놓은 거야.
+                결과는 JSON 형식으로 반환해줘. 결과에서 recommendations 목록은 1 ~ 3개까지 넣어줘
+
+                ## 사용자 정보
+                금융 성향: %s
+                성별: %s
+                만 나이: %s
+                월 수입: %s
+                자산: %s
+                
+                ## 사용자 요구
+                투자 금액: %s 원
+                투자 기간: %s 개월
+                
+                ## 금융 상품 목록
+                %s
+
+                """.formatted(
+                        profile.getPropensity().getName(),
+                        profile.getGender(),
+                        Period.between(profile.getBirthDate(), LocalDate.now()),
+                        profile.getSalary(),
+                        profile.getAsset(),
+                        request.getAmount(),
+                        request.getTerm(),
+                        stringBuilder
+                        ),
+                """
+                {
+                  "recommendations": [
+                    {
+                      "id": "<금융 상품 ID>",
+                      "description": "<금융 상품 설명>",
+                      "reason": "<추천 이유 및 장단점>",
+                      "detailUrl": "<상세 URL>"
+                    }
+                  ],
+                  "strategy": "<금융 상품 추천 이유 및 전략 설명>"
                 }
                 """
         );

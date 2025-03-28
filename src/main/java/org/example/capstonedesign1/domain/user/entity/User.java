@@ -2,6 +2,7 @@ package org.example.capstonedesign1.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.enums.Role;
 import org.example.capstonedesign1.global.common.BaseEntity;
 
@@ -38,7 +39,7 @@ public class User extends BaseEntity {
         this.registerCompleted = true;
     }
 
-    public void updatePropensity(String propensity){
+    public void updatePropensity(Propensity propensity){
         this.profile.updatePropensity(propensity);
     }
 

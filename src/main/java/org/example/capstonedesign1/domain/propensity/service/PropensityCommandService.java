@@ -9,6 +9,7 @@ import org.example.capstonedesign1.domain.propensity.dto.json.PropensityAnalysis
 import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
 import org.example.capstonedesign1.domain.propensity.dto.response.PropensityAnalysisResponse;
 import org.example.capstonedesign1.domain.propensity.entity.UserPropensity;
+import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.propensity.repository.UserPropensityRepository;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.global.template.PromptTemplate;
@@ -27,19 +28,18 @@ public class PropensityCommandService {
     private final OpenAiApiClient openAiApiClient;
 
     private final UserPropensityRepository userPropensityRepository;
+    private final PropensityQueryService propensityQueryService;
 
     public PropensityAnalysisResponse submitSurvey(User user, SurveyRequest request){
         String requestMessage =  PromptTemplate.propensityAnalysisPrompt(
                 user.getProfile().getGender().toString(),
                 request.getSurveyEntries());
 
-        OpenAiResponse response =  openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)) );
+        String content =  openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
 
-        String content = response.getChoices().get(0).getMessage().getContent().trim();
-
-        PropensityAnalysis propensityAnalysis = JsonUtil.parseClass(
-                PropensityAnalysis.class, content);
-        UserPropensity userPropensity = new UserPropensity(user, propensityAnalysis.type(), content);
+        PropensityAnalysis propensityAnalysis = JsonUtil.parseClass(PropensityAnalysis.class, content);
+        Propensity propensity = Propensity.findByName(propensityAnalysis.type());
+        UserPropensity userPropensity = new UserPropensity(user, propensity, content);
         userPropensityRepository.save(userPropensity);
         return new PropensityAnalysisResponse(userPropensity.getId(), propensityAnalysis, userPropensity.getCreatedAt());
     }

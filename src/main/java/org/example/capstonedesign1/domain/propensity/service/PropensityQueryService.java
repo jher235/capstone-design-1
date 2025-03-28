@@ -35,6 +35,7 @@ public class PropensityQueryService {
     private final UserPropensityRepository userPropensityRepository;
     private final UserQueryService userQueryService;
 
+
     public SurveyResponse getSurvey(){
         List<PropensityQuestion> questions = propensityQuestionRepository.findAllWithOptions();
         return SurveyResponse.from(questions);

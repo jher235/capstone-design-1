@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -38,15 +39,22 @@ public class OpenAiApiClient {
                 .build();
     }
 
-    public OpenAiResponse sendRequest(List<Message> messages) {
+    public String sendRequest(List<Message> messages) {
         OpenAiRequest request = new OpenAiRequest(model, messages, maxTokens, temperature);
         log.info("request: {}", request);
 
-        return webClient.post()
+        OpenAiResponse response = webClient.post()
                 .uri(REQUEST_URI)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(OpenAiResponse.class)
                 .block();
+
+        return parseContent(Objects.requireNonNull(response));
     }
+
+    private String parseContent(OpenAiResponse response){
+        return response.getChoices().get(0).getMessage().getContent().trim();
+    }
+
 }
