@@ -1,5 +1,5 @@
 package org.example.capstonedesign1.domain.bankproduct.entity.enums;
 
-public enum ProductType {
+public enum BankProductType {
     DEPOSIT, SAVING
 }
