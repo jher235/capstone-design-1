@@ -8,15 +8,22 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.capstonedesign1.domain.bankproduct.dto.request.BankProductRecommendRequest;
+import org.example.capstonedesign1.domain.cardproduct.dto.json.CardProductRecommendationContent;
+import org.example.capstonedesign1.domain.cardproduct.dto.response.CardProductRecommendationResponse;
 import org.example.capstonedesign1.domain.cardproduct.entity.CardProduct;
+import org.example.capstonedesign1.domain.cardproduct.entity.CardProductRecommendation;
+import org.example.capstonedesign1.domain.cardproduct.repository.CardProductRecommendationRepository;
 import org.example.capstonedesign1.domain.cardproduct.repository.CardProductRepository;
 import org.example.capstonedesign1.domain.chat.client.OpenAiApiClient;
+import org.example.capstonedesign1.domain.chat.dto.Message;
 import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
 import org.example.capstonedesign1.global.exception.AuthorizedException;
 import org.example.capstonedesign1.global.exception.BadRequestException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
+import org.example.capstonedesign1.global.template.PromptTemplate;
+import org.example.capstonedesign1.global.util.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,24 +44,28 @@ public class CardProductCommandService {
     private final UserQueryService userQueryService;
 
     private final CardProductRepository cardProductRepository;
+    private final CardProductRecommendationRepository cardProductRecommendationRepository;
 
     private final OpenAiApiClient openAiApiClient;
 
-    public void recommendCardProduct(User user, MultipartFile file){
+    public CardProductRecommendationResponse recommendCardProduct(User user, MultipartFile file){
         validXlsxFile(file);
         String paymentRecord = resolvePaymentRecord(user, file); //비동기로 처리하면 더 빠를 것 같음.
 
         Propensity userPropensity = userQueryService.ensureUserPropensity(user);
         List<CardProduct> cardProducts = cardProductRepository.getRecommendable(userPropensity);
 
-        StringBuilder sb = new StringBuilder();
+        String prompt = PromptTemplate.CardProductRecommendPrompt(user, paymentRecord, cardProducts);
+        String response = openAiApiClient.sendRequest(List.of(new Message(OpenAiApiClient.SYSTEM_ROLE, prompt)));
 
-        cardProducts.stream()
-                .map(CardProduct::toString)
-                .forEach(sb::append);
+        CardProductRecommendationContent content = JsonUtil.parseClass(CardProductRecommendationContent.class, response);
 
-        log.info(sb);
+        CardProductRecommendation cardProductRecommendation = new CardProductRecommendation(user, response);
 
+        cardProductRecommendationRepository.save(cardProductRecommendation);
+        CardProductRecommendationResponse recommendationResponse = new CardProductRecommendationResponse(
+                cardProductRecommendation.getId(), content, cardProductRecommendation.getCreatedAt());
+        return recommendationResponse;
     }
 
     private void validXlsxFile(MultipartFile file){
