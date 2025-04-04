@@ -16,12 +16,14 @@ public enum ErrorCode {
     NOT_NULL("4005", "필수값이 공백입니다."),
     INVALID_JSON_REQUEST("4006", "JSON 파싱 시 오류가 발생했습니다."),
     PROPENSITY_NOT_SET("4007", "아직 금융 성향 분석을 진행하지 않은 유저입니다."),
+    INVALID_FILE("4008", "잘못된 파일 형식입니다."),
 
     USER_UNAUTHORIZED("4010", "로그인에 실패했습니다."),
     EXPIRED_JWT_TOKEN("4011", "만료된 JWT 토큰입니다."),
     INVALID_JWT_TOKEN("4012", "유효하지 않은 JWT 토큰입니다."),
 
     UN_AUTHORIZED("4030", "접근 권한이 없습니다."),
+    PAYMENT_XLSX_UNAUTHORIZED("4031", "결제 내역 파일에 접근할 수 없습니다."),
 
     USER_NOT_FOUND("4040", "유저를 찾을 수 없습니다."),
     USER_PROPENSITY_NOT_FOUND("4041", "금융 성향 분석을 찾을 수 없습니다."),
