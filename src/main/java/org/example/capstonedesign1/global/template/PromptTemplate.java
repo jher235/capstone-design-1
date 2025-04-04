@@ -2,6 +2,7 @@ package org.example.capstonedesign1.global.template;
 
 import org.example.capstonedesign1.domain.bankproduct.dto.request.BankProductRecommendRequest;
 import org.example.capstonedesign1.domain.bankproduct.entity.BankProduct;
+import org.example.capstonedesign1.domain.cardproduct.entity.CardProduct;
 import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
 import org.example.capstonedesign1.domain.user.entity.Profile;
 import org.example.capstonedesign1.domain.user.entity.User;
@@ -114,6 +115,56 @@ public class PromptTemplate {
                     }
                   ],
                   "strategy": "<금융 상품 추천 이유 및 전략 설명>"
+                }
+                """
+        );
+    }
+
+    public static String CardProductRecommendPrompt(User user, String paymentRecord, List<CardProduct> products){
+        Profile profile = user.getProfile();
+        StringBuilder stringBuilder = new StringBuilder();
+        products.stream()
+                .forEach(product -> stringBuilder.append(product.toString()).append("\n\n"));
+        return fillTemplate(
+                """
+                ## 명령
+                사용자의 최근 결제 내역을 중심으로, 금융 성향 + 정보를 고려하여 카드 상품을 추천해줘.
+                카드 상품 목록은 DB 내의 사용자 금융 성향과 일치하는 상품들을 분류해놓은 거야.
+                결과는 JSON 형식으로 반환해줘. 결과에서 recommendations 목록은 1 ~ 3개까지 넣어줘
+
+                ## 사용자 정보
+                금융 성향: %s
+                성별: %s
+                만 나이: %s
+                월 수입: %s
+                자산: %s
+                
+                ## 사용자의 최근 결제 내역
+                %s
+                
+                ## 카드 상품 목록
+                %s
+
+                """.formatted(
+                        profile.getPropensity().getName(),
+                        profile.getGender(),
+                        Period.between(profile.getBirthDate(), LocalDate.now()),
+                        profile.getSalary(),
+                        profile.getAsset(),
+                        paymentRecord,
+                        stringBuilder
+                ),
+                """
+                {
+                  "recommendations": [
+                    {
+                      "id": "<카드 상품 ID>",
+                      "description": "<카드 상품 설명>",
+                      "reason": "<추천 이유 및 장단점>",
+                      "detailUrl": "<상세 URL>"
+                    }
+                  ],
+                  "strategy": "<종합적인 상품 추천 이유 및 전략 설명>"
                 }
                 """
         );
