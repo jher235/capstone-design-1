@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.capstonedesign1.domain.bankproduct.entity.enums.ProductType;
+import org.example.capstonedesign1.domain.bankproduct.entity.enums.BankProductType;
 import org.example.capstonedesign1.global.common.BaseEntity;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class BankProduct extends BaseEntity {
     @Column(nullable = false)
     private String name;
     @Enumerated(EnumType.STRING)
-    private ProductType productType;
+    private BankProductType bankProductType;
     @Column(nullable = false)
     private String bankName;
     private String description;
@@ -45,7 +45,7 @@ public class BankProduct extends BaseEntity {
         StringBuilder sb = new StringBuilder("BankProduct{");
         sb.append("id=").append(this.getId())
                 .append(", name=").append(name)
-                .append(", productType=").append(productType)
+                .append(", productType=").append(bankProductType)
                 .append(", bankName=").append(bankName)
                 .append(", description=").append(description != null ? description : "없음");
 

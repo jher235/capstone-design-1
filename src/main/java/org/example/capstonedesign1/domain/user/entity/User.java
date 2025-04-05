@@ -6,6 +6,8 @@ import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.enums.Role;
 import org.example.capstonedesign1.global.common.BaseEntity;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,6 +43,11 @@ public class User extends BaseEntity {
 
     public void updatePropensity(Propensity propensity){
         this.profile.updatePropensity(propensity);
+    }
+
+    public String get6DigitBirthDate(){
+        LocalDate birthDate = this.profile.getBirthDate();
+        return birthDate.format(DateTimeFormatter.ofPattern("yyMMdd"));
     }
 
     @Override

@@ -46,6 +46,10 @@ dependencies {
     //webflux - webclient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
 }
 
 tasks.named('test') {
