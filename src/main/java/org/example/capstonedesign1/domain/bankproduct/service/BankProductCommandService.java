@@ -1,6 +1,5 @@
 package org.example.capstonedesign1.domain.bankproduct.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.capstonedesign1.domain.bankproduct.dto.json.BankProductRecommendationContent;
@@ -12,7 +11,6 @@ import org.example.capstonedesign1.domain.bankproduct.repository.BankProductReco
 import org.example.capstonedesign1.domain.bankproduct.repository.BankProductRepository;
 import org.example.capstonedesign1.domain.chat.client.OpenAiApiClient;
 import org.example.capstonedesign1.domain.chat.dto.Message;
-import org.example.capstonedesign1.domain.chat.dto.response.OpenAiResponse;
 import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
@@ -37,11 +35,14 @@ public class BankProductCommandService {
 
     /**
      * 유저의 성향, 추천 요구사항에 맞는 상품 목록들을 DB에서 가져온 후 유저 정보와 금융 상품 목록을 바탕으로 금융 상품 추천 진행
+     * strategy 는 정규화하지만, 추천 받은 상품 목록은 json으로 저장함. json으로 저장 시 칼럼명이 함께 저장되고 json 형태를 유지하므로 사이즈가 늘어난다는 단점이 존재하나
+     * 과도한 정규화로 인해 조회 시 join 연산을 불필요하게 수행하는 것을 방지하기 위해 json으로 저장함
+     *
      * @param user
      * @param request
      * @return
      */
-    public BankProductRecommendationResponse recommendBankProduct(User user, BankProductRecommendRequest request){
+    public BankProductRecommendationResponse recommendBankProduct(User user, BankProductRecommendRequest request) {
         Propensity propensity = userQueryService.ensureUserPropensity(user);
 
         List<BankProduct> bankProducts =
@@ -53,11 +54,12 @@ public class BankProductCommandService {
         BankProductRecommendationContent bankProductRecommendationContent =
                 JsonUtil.parseClass(BankProductRecommendationContent.class, content);
 
-        BankProductRecommendation recommendation = new BankProductRecommendation(user, content);
+        String recommendationJson = JsonUtil.convertToJson(bankProductRecommendationContent.recommendations());
+
+        BankProductRecommendation recommendation = new BankProductRecommendation(user,
+                bankProductRecommendationContent.strategy(), recommendationJson);
         bankProductRecommendationRepository.save(recommendation);
-        return new BankProductRecommendationResponse(recommendation.getId(),
-                bankProductRecommendationContent,
-                recommendation.getCreatedAt());
+        return BankProductRecommendationResponse.from(recommendation);
     }
 
 }
