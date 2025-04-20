@@ -16,9 +16,11 @@ public class BankProductRecommendation extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    private User user;
+
+    private String strategy;
 
     @Column(nullable = false, columnDefinition = "JSON")
-    String content;
+    private String content;
 
 }
