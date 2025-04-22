@@ -25,7 +25,7 @@ public class BankProductQueryService {
     private final BankProductRecommendationRepository bankProductRecommendationRepository;
     private final UserQueryService userQueryService;
 
-    public PaginationResponse<BankProductRecommendationPreview> getRecommendations(User user, Integer page, Integer size) {
+    public PaginationResponse<BankProductRecommendationPreview> getRecommendations(User user, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<BankProductRecommendationPreview> bankProductRecommendations =
                 bankProductRecommendationRepository.findBankProductRecommendationsByUser(user, pageable);
