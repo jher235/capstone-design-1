@@ -9,7 +9,7 @@ public enum ErrorCode {
 
     //BadRequest
     SIZE("4001", "길이가 유효하지 않습니다."),
-    PATTERN("4001","형식에 맞지 않습니다."),
+    PATTERN("4001", "형식에 맞지 않습니다."),
     NOT_BLANK("4002", "필수값이 공백입니다."),
     LENGTH("4003", "길이가 유효하지 않습니다."),
     EMAIL("4004", "이메일 형식이 유효하지 않습니다."),
@@ -27,6 +27,8 @@ public enum ErrorCode {
 
     USER_NOT_FOUND("4040", "유저를 찾을 수 없습니다."),
     USER_PROPENSITY_NOT_FOUND("4041", "금융 성향 분석을 찾을 수 없습니다."),
+    BANK_PRODUCT_RECOMMENDATION_NOT_FOUND("4042", "금융 상품 추천 결과를 찾을 수 없습니다."),
+    CARD_PRODUCT_RECOMMENDATION_NOT_FOUND("4043", "카드 상품 추천 결과를 찾을 수 없습니다."),
 
     CONFLICT_EMAIL("4090", "중복된 이메일입니다."),
     ALREADY_REGISTER_COMPLETED("4091", "이미 회원가입 완료한 유저입니다."),
@@ -37,15 +39,15 @@ public enum ErrorCode {
     private final String status;
     private final String message;
 
-    public static ErrorCode resolveValidationErrorCode(String code){
-        return switch (code){
+    public static ErrorCode resolveValidationErrorCode(String code) {
+        return switch (code) {
             case "Size" -> SIZE;
             case "Pattern" -> PATTERN;
             case "NotBlank" -> NOT_BLANK;
             case "Length" -> LENGTH;
             case "Email" -> EMAIL;
             case "NotNull" -> NOT_NULL;
-            default -> throw new IllegalArgumentException("Unexpected value: "+ code);
+            default -> throw new IllegalArgumentException("Unexpected value: " + code);
         };
     }
 }

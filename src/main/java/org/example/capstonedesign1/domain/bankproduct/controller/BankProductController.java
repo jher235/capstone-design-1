@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -38,9 +40,11 @@ public class BankProductController {
     @PostMapping("/recommendations")
     public ResponseEntity<ResponseDto<BankProductRecommendationResponse>> recommendBankProducts(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody @Valid BankProductRecommendRequest request){
-        BankProductRecommendationResponse recommendationResponse =  bankProductCommandService.recommendBankProduct(userDetails.getUser(), request);
-        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 상품 추천 받기 성공", recommendationResponse), HttpStatus.OK);
+            @RequestBody @Valid BankProductRecommendRequest request) {
+        BankProductRecommendationResponse recommendationResponse
+                = bankProductCommandService.recommendBankProduct(userDetails.getUser(), request);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK, "금융 상품 추천 받기 성공", recommendationResponse), HttpStatus.OK);
     }
 
     @Operation(
@@ -53,13 +57,31 @@ public class BankProductController {
     @GetMapping("/recommendations")
     public ResponseEntity<ResponseDto<PaginationResponse<BankProductRecommendationPreview>>> getRecommendationPreviews(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(name ="page", defaultValue = "0") int page,
-            @RequestParam(name ="size", defaultValue = "10") int size){
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PaginationResponse<BankProductRecommendationPreview> recommendationsPreview
                 = bankProductQueryService.getRecommendations(userDetails.getUser(), page, size);
         return new ResponseEntity<>(ResponseDto.res(
                 HttpStatus.OK, "금융 상품 추천 목록 조회 성공", recommendationsPreview), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "금융 상품 추천 상세 조회 API",
+            description = "추천 받은 금융 상품을 상세 조회하는 api"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "금융 상품 추천 상세 조회 성공"),
+            @ApiResponse(responseCode = "4042", description = "요청한 금융 성향 분석을 찾을 수 없는 경우"),
+            @ApiResponse(responseCode = "4030", description = "요청한 금융 상품 추천이 사용자의 추천 결과가 아닌 경우"),
+    })
+    @GetMapping("/recommendations/{recommendation-id}")
+    public ResponseEntity<ResponseDto<BankProductRecommendationResponse>> getRecommendationPreviews(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("recommendation-id") UUID recommendationId) {
+        BankProductRecommendationResponse response
+                = bankProductQueryService.getRecommendation(userDetails.getUser(), recommendationId);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK, "금융 상품 추천 상세 조회 성공", response), HttpStatus.OK);
+    }
 
 }
