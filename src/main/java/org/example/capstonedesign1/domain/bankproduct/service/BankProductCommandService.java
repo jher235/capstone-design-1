@@ -56,8 +56,8 @@ public class BankProductCommandService {
 
         String recommendationJson = JsonUtil.convertToJson(bankProductRecommendationContent.recommendations());
 
-        BankProductRecommendation recommendation = new BankProductRecommendation(user,
-                bankProductRecommendationContent.strategy(), recommendationJson);
+        BankProductRecommendation recommendation = new BankProductRecommendation(
+                user, bankProductRecommendationContent.strategy(), recommendationJson);
         bankProductRecommendationRepository.save(recommendation);
         return BankProductRecommendationResponse.from(recommendation);
     }
