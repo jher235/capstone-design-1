@@ -17,6 +17,8 @@ public class CardProductRecommendation extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
+    private String strategy;
+
     @Column(nullable = false, columnDefinition = "JSON")
-    String content;
+    private String content;
 }

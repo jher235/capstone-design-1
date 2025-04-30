@@ -7,6 +7,8 @@ import org.example.capstonedesign1.global.exception.InternalServerException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 
 @Component
 public class JsonUtil {
@@ -15,6 +17,26 @@ public class JsonUtil {
     public static <T> T parseClass(Class<T> tClass, String content){
         try {
             return objectMapper.readValue(content, tClass);
+        } catch (JsonMappingException e) {
+            throw new InternalServerException(ErrorCode.JSON_PARSING_FAILED, e.getMessage());
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(ErrorCode.JSON_PARSING_FAILED, e.getMessage());
+        }
+    }
+
+    public static <T> String convertToJson(Class<T> tClass){
+        try {
+            return objectMapper.writeValueAsString(tClass);
+        } catch (JsonMappingException e) {
+            throw new InternalServerException(ErrorCode.JSON_PARSING_FAILED, e.getMessage());
+        } catch (JsonProcessingException e) {
+            throw new InternalServerException(ErrorCode.JSON_PARSING_FAILED, e.getMessage());
+        }
+    }
+
+    public static <T> String convertToJson(List<T> objects){
+        try {
+            return objectMapper.writeValueAsString(objects);
         } catch (JsonMappingException e) {
             throw new InternalServerException(ErrorCode.JSON_PARSING_FAILED, e.getMessage());
         } catch (JsonProcessingException e) {

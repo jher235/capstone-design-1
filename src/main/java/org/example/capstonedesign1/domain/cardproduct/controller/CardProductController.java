@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.example.capstonedesign1.domain.auth.security.CustomUserDetails;
 import org.example.capstonedesign1.domain.cardproduct.dto.response.CardProductRecommendationResponse;
+import org.example.capstonedesign1.domain.cardproduct.dto.response.projection.CardProductRecommendationPreview;
 import org.example.capstonedesign1.domain.cardproduct.service.CardProductCommandService;
+import org.example.capstonedesign1.domain.cardproduct.service.CardProductQueryService;
+import org.example.capstonedesign1.global.dto.PaginationResponse;
 import org.example.capstonedesign1.global.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,12 +18,15 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/card-product")
+@RequestMapping("/card-products")
 public class CardProductController {
 
     private final CardProductCommandService cardProductCommandService;
+    private final CardProductQueryService cardProductQueryService;
 
     @Operation(
             summary = "카드 상품 추천 API",
@@ -31,11 +37,46 @@ public class CardProductController {
             @ApiResponse(responseCode = "4007", description = "아직 금융 성향 분석을 진행하지 않은 경우"),
             @ApiResponse(responseCode = "5000", description = "서버 내부에서 json 파싱 오류")
     })
-    @PostMapping(value = "/recommend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
+    @PostMapping(value = "/recommendations", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto<CardProductRecommendationResponse>> getUserPropensity(
             @RequestPart MultipartFile file,
-            @AuthenticationPrincipal CustomUserDetails userDetails){
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         CardProductRecommendationResponse response = cardProductCommandService.recommendCardProduct(userDetails.getUser(), file);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "카드 상품 추천 받기 성공", response), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "카드 상품 추천 목록 조회 API",
+            description = "추천 받은 카드 상품 목록을 조회하는 api"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "카드 상품 추천 결과 목록 조회 성공"),
+    })
+    @GetMapping("/recommendations")
+    public ResponseEntity<ResponseDto<PaginationResponse<CardProductRecommendationPreview>>> getRecommendationPreviews(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PaginationResponse<CardProductRecommendationPreview> recommendationsPreview
+                = cardProductQueryService.getRecommendations(userDetails.getUser(), page, size);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK, "카드 상품 추천 목록 조회 성공", recommendationsPreview), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "카드 상품 추천 상세 조회 API",
+            description = "추천 받은 카드 상품 내역을 상세 조회하는 api"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "카드 상품 추천 결과 상세 조회 성공"),
+    })
+    @GetMapping("/recommendations/{recommendation-id}")
+    public ResponseEntity<ResponseDto<CardProductRecommendationResponse>> getRecommendation(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(name = "recommendation-id") UUID recommendationId) {
+        CardProductRecommendationResponse response
+                = cardProductQueryService.getRecommendation(userDetails.getUser(), recommendationId);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK, "카드 상품 추천 목록 조회 성공", response), HttpStatus.OK);
     }
 }
