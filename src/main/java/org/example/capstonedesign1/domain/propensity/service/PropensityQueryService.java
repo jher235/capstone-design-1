@@ -46,7 +46,7 @@ public class PropensityQueryService {
                 -> new NotFoundException(ErrorCode.USER_PROPENSITY_NOT_FOUND));
     }
 
-    public PaginationResponse getUserPropensities(User user, int page, int size){
+    public PaginationResponse<UserPropensityPreview> getUserPropensities(User user, int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Page<UserPropensityPreview> propensityPreviews =

@@ -9,6 +9,7 @@ import org.example.capstonedesign1.domain.auth.security.CustomUserDetails;
 import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
 import org.example.capstonedesign1.domain.propensity.dto.response.PropensityAnalysisResponse;
 import org.example.capstonedesign1.domain.propensity.dto.response.SurveyResponse;
+import org.example.capstonedesign1.domain.propensity.dto.response.projection.UserPropensityPreview;
 import org.example.capstonedesign1.domain.propensity.service.PropensityCommandService;
 import org.example.capstonedesign1.domain.propensity.service.PropensityQueryService;
 import org.example.capstonedesign1.domain.user.service.UserCommandService;
@@ -67,10 +68,11 @@ public class PropensityController {
             @ApiResponse(responseCode = "200", description = "금융 성향 분석 목록 조회 성공"),
     })
     @GetMapping("/analysis")
-    public ResponseEntity<ResponseDto<PaginationResponse>> getUserPropensities(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                 @RequestParam(name ="page", defaultValue = "0") int page,
-                                                                 @RequestParam(name ="size", defaultValue = "10") int size){
-        PaginationResponse response = propensityQueryService.getUserPropensities(userDetails.getUser(), page, size);
+    public ResponseEntity<ResponseDto<PaginationResponse<UserPropensityPreview>>> getUserPropensities(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(name ="page", defaultValue = "0") int page,
+            @RequestParam(name ="size", defaultValue = "10") int size){
+        PaginationResponse<UserPropensityPreview> response = propensityQueryService.getUserPropensities(userDetails.getUser(), page, size);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 목록 조회 성공", response), HttpStatus.OK);
     }
 

@@ -12,8 +12,8 @@ public class PaginationResponse<T> {
     private final List<T> content;
     private final Pagination pagination;
 
-    public static <T> PaginationResponse from(Page<T> pageData){
-        return new PaginationResponse(pageData.getContent(), Pagination.from(pageData));
+    public static <T> PaginationResponse<T> from(Page<T> pageData){
+        return new PaginationResponse<T>(pageData.getContent(), Pagination.from(pageData));
     }
 
     @Getter
