@@ -18,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/card-products")
@@ -59,5 +61,22 @@ public class CardProductController {
                 = cardProductQueryService.getRecommendations(userDetails.getUser(), page, size);
         return new ResponseEntity<>(ResponseDto.res(
                 HttpStatus.OK, "카드 상품 추천 목록 조회 성공", recommendationsPreview), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "카드 상품 추천 상세 조회 API",
+            description = "추천 받은 카드 상품 내역을 상세 조회하는 api"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "카드 상품 추천 결과 상세 조회 성공"),
+    })
+    @GetMapping("/recommendations/{recommendation-id}")
+    public ResponseEntity<ResponseDto<CardProductRecommendationResponse>> getRecommendation(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(name = "recommendation-id") UUID recommendationId) {
+        CardProductRecommendationResponse response
+                = cardProductQueryService.getRecommendation(userDetails.getUser(), recommendationId);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK, "카드 상품 추천 목록 조회 성공", response), HttpStatus.OK);
     }
 }
