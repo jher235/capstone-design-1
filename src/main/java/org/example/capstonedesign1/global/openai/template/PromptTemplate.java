@@ -10,6 +10,7 @@ import org.example.capstonedesign1.domain.user.entity.User;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Optional;
 
 
 public class PromptTemplate {
@@ -26,6 +27,45 @@ public class PromptTemplate {
             ### 응답: %s
                         
             """;
+
+    public static String conversationPrompt(String requestMessage,
+                                            Optional<String> summary,
+                                            List<BankProduct> bankProducts,
+                                            List<CardProduct> cardProducts) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        bankProducts.stream()
+                .forEach(product -> stringBuilder.append(product.toString()).append("\n\n"));
+        cardProducts.stream()
+                .forEach(product -> stringBuilder.append(product.toString()).append("\n\n"));
+
+
+        return fillTemplate(
+                """
+                        ## 명령
+                        금융 관련 대화를 진행하는 입장이야
+                        결과는 JSON 형식으로 반환해줘.
+                                                
+                        ## 사용자의 input
+                        %s
+                                                
+                        ## 이전 대화 요약
+                        %s
+                                                
+                        ## 관련 상품 목록
+                        %s
+                                                
+                                                
+                        """.formatted(requestMessage, summary.orElse("현재는 첫 대화로, 요약이 없음"), stringBuilder),
+                """
+                        {
+                            "message": "<응답 메세지>",
+                            "summary": "<이전 내용 + 현재 대화 내용을 모두 합친 요약>"           
+                        }
+                        """
+        );
+    }
+
 
     public static String fillTemplate(String request, String responseFormat) {
         return BASE_TEMPLATE.replace("{{request}}", request)
