@@ -1,10 +1,7 @@
-package org.example.capstonedesign1.domain.chat.dto.response;
+package org.example.capstonedesign1.global.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.capstonedesign1.domain.chat.dto.Message;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package org.example.capstonedesign1.domain.chat.dto.request;
+package org.example.capstonedesign1.global.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.capstonedesign1.domain.chat.dto.Message;
+import org.example.capstonedesign1.global.dto.response.Message;
 
 import java.util.List;
 
