@@ -64,9 +64,8 @@ public class OpenAiApiClient {
         return response.getChoices().get(0).getMessage().getContent().trim();
     }
 
-    public float[] sendEmbeddingRequest(String input) {
+    public Float[] sendEmbeddingRequest(String input) {
         OpenAiEmbeddingRequest request = new OpenAiEmbeddingRequest(input, embeddingModel, ENCORING_FORMAT);
-        log.info("request: {}", request);
 
         OpenAiEmbeddingResponse response = webClient.post()
                 .uri(EMBEDDING_REQUEST_URI)
