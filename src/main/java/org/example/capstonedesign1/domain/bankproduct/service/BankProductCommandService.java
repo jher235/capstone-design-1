@@ -9,18 +9,18 @@ import org.example.capstonedesign1.domain.bankproduct.entity.BankProduct;
 import org.example.capstonedesign1.domain.bankproduct.entity.BankProductRecommendation;
 import org.example.capstonedesign1.domain.bankproduct.repository.BankProductRecommendationRepository;
 import org.example.capstonedesign1.domain.bankproduct.repository.BankProductRepository;
-import org.example.capstonedesign1.domain.chat.client.OpenAiApiClient;
-import org.example.capstonedesign1.domain.chat.dto.Message;
 import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
-import org.example.capstonedesign1.global.template.PromptTemplate;
+import org.example.capstonedesign1.global.dto.response.Message;
+import org.example.capstonedesign1.global.openai.client.OpenAiApiClient;
+import org.example.capstonedesign1.global.openai.template.PromptTemplate;
 import org.example.capstonedesign1.global.util.JsonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.example.capstonedesign1.domain.chat.client.OpenAiApiClient.SYSTEM_ROLE;
+import static org.example.capstonedesign1.global.openai.client.OpenAiApiClient.SYSTEM_ROLE;
 
 @Service
 @RequiredArgsConstructor

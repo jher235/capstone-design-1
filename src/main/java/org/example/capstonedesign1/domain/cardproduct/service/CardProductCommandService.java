@@ -16,15 +16,15 @@ import org.example.capstonedesign1.domain.cardproduct.entity.CardProduct;
 import org.example.capstonedesign1.domain.cardproduct.entity.CardProductRecommendation;
 import org.example.capstonedesign1.domain.cardproduct.repository.CardProductRecommendationRepository;
 import org.example.capstonedesign1.domain.cardproduct.repository.CardProductRepository;
-import org.example.capstonedesign1.domain.chat.client.OpenAiApiClient;
-import org.example.capstonedesign1.domain.chat.dto.Message;
 import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
-import org.example.capstonedesign1.global.exception.AuthorizedException;
+import org.example.capstonedesign1.global.dto.response.Message;
 import org.example.capstonedesign1.global.exception.BadRequestException;
+import org.example.capstonedesign1.global.exception.ForbiddenException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
-import org.example.capstonedesign1.global.template.PromptTemplate;
+import org.example.capstonedesign1.global.openai.client.OpenAiApiClient;
+import org.example.capstonedesign1.global.openai.template.PromptTemplate;
 import org.example.capstonedesign1.global.util.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,11 +92,11 @@ public class CardProductCommandService {
                     return paymentRecordFormat(sheet);
                 }
             }
-            throw new AuthorizedException(ErrorCode.PAYMENT_XLSX_UNAUTHORIZED);
+            throw new ForbiddenException(ErrorCode.PAYMENT_XLSX_UNAUTHORIZED);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (GeneralSecurityException e) {
-            throw new AuthorizedException(ErrorCode.PAYMENT_XLSX_UNAUTHORIZED, "결제 내역 파일의 PW가 일치하지 않습니다.");
+            throw new ForbiddenException(ErrorCode.PAYMENT_XLSX_UNAUTHORIZED, "결제 내역 파일의 PW가 일치하지 않습니다.");
         }
     }
 

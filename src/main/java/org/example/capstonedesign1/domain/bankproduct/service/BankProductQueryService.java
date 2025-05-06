@@ -8,7 +8,7 @@ import org.example.capstonedesign1.domain.bankproduct.repository.BankProductReco
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
 import org.example.capstonedesign1.global.dto.PaginationResponse;
-import org.example.capstonedesign1.global.exception.AuthorizedException;
+import org.example.capstonedesign1.global.exception.ForbiddenException;
 import org.example.capstonedesign1.global.exception.NotFoundException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class BankProductQueryService {
     public BankProductRecommendationResponse getRecommendation(User user, UUID recommendationId) {
         BankProductRecommendation recommendation = findById(recommendationId);
         if (!userQueryService.isSameUser(user, recommendation.getUser())) {
-            throw new AuthorizedException(ErrorCode.UN_AUTHORIZED);
+            throw new ForbiddenException(ErrorCode.UN_AUTHORIZED);
         }
         return BankProductRecommendationResponse.from(recommendation);
     }
