@@ -5,7 +5,7 @@ import org.example.capstonedesign1.domain.propensity.entity.UserPropensity;
 import org.example.capstonedesign1.domain.propensity.service.PropensityQueryService;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.repository.UserRepository;
-import org.example.capstonedesign1.global.exception.AuthorizedException;
+import org.example.capstonedesign1.global.exception.ForbiddenException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +23,10 @@ public class UserCommandService {
 
 
     @Transactional
-    public void updatePropensity(User user, UUID userPropensityId){
+    public void updatePropensity(User user, UUID userPropensityId) {
         UserPropensity userPropensity = propensityQueryService.findUserPropensityById(userPropensityId);
-        if(!userQueryService.isSameUser(user, userPropensity.getUser())){
-            throw new AuthorizedException(ErrorCode.UN_AUTHORIZED);
+        if (!userQueryService.isSameUser(user, userPropensity.getUser())) {
+            throw new ForbiddenException(ErrorCode.UN_AUTHORIZED);
         }
 
         user.updatePropensity(userPropensity.getPropensity());
