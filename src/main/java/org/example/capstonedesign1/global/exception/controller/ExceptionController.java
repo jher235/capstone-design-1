@@ -2,11 +2,6 @@ package org.example.capstonedesign1.global.exception.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.example.capstonedesign1.domain.auth.controller.AuthController;
-import org.example.capstonedesign1.domain.bankproduct.controller.BankProductController;
-import org.example.capstonedesign1.domain.cardproduct.controller.CardProductController;
-import org.example.capstonedesign1.domain.propensity.controller.PropensityController;
-import org.example.capstonedesign1.domain.user.controller.UserController;
 import org.example.capstonedesign1.global.dto.ErrorResponseDto;
 import org.example.capstonedesign1.global.exception.CustomException;
 import org.example.capstonedesign1.global.exception.DtoValidationException;
@@ -17,15 +12,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(annotations = {RestController.class},
-        basePackageClasses = {AuthController.class,
-                BankProductController.class,
-                CardProductController.class,
-                PropensityController.class,
-                UserController.class})
+//@RestControllerAdvice(annotations = {RestController.class},
+//        basePackageClasses = {
+//                AdminController.class,
+//                AuthController.class,
+//                BankProductController.class,
+//                CardProductController.class,
+//                PropensityController.class,
+//                UserController.class,
+//                ConversationController.class,
+//        })
 @Slf4j
 public class ExceptionController {
 

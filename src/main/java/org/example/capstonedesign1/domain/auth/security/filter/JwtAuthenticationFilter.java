@@ -46,19 +46,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                || requestUri.startsWith("/swagger-ui")
 //                || requestUri.startsWith("/v3/api-docs");
 
-        String requestUri =  request.getRequestURI();
+        String requestUri = request.getRequestURI();
         boolean skip = (requestUri.startsWith("/auth/sign-up")
                 && !requestUri.startsWith("/auth/sign-up/complete"))
                 || requestUri.startsWith("/auth/login")
                 || requestUri.startsWith("/swagger-ui")
                 || requestUri.startsWith("/v3/api-docs");
 
-        log.info("{}, {}", requestUri, String.valueOf(skip));
+        log.info("{}, {}", requestUri, skip);
         return skip;
     }
 
     /**
      * entryPoint를 사용하면 응답 통일 시 사용하던 errorCode의 customStatus나 customMessage를 사용할 수 없으므로 필터에서 예외를 직접 처리
+     *
      * @param request
      * @param response
      * @param filterChain
@@ -81,9 +82,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             filterChain.doFilter(request, response);
-        }catch (ExpiredJwtException expiredJwtException){
+        } catch (ExpiredJwtException expiredJwtException) {
             sendErrorResponse(response, new UnAuthenticationException(ErrorCode.EXPIRED_JWT_TOKEN));
-        }catch (Exception e){
+        } catch (Exception e) {
             sendErrorResponse(response, new UnAuthenticationException(ErrorCode.INVALID_JWT_TOKEN));
         }
     }
@@ -99,7 +100,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void sendErrorResponse(HttpServletResponse response,
                                    CustomException customException) throws IOException {
-        HttpStatus httpStatus = HttpStatus.valueOf(customException.getErrorCode().getStatus().substring(0,3));
+
+        HttpStatus httpStatus = HttpStatus.valueOf(
+                Integer.parseInt(customException.getErrorCode().getStatus().substring(0, 3)));
 
         response.setStatus(httpStatus.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

@@ -33,8 +33,8 @@ public enum ErrorCode {
     CONFLICT_EMAIL("4090", "중복된 이메일입니다."),
     ALREADY_REGISTER_COMPLETED("4091", "이미 회원가입 완료한 유저입니다."),
 
-    JSON_PARSING_FAILED("5000", "JSON 파싱 시 오류가 발생했습니다."),
-    ;
+    JSON_PARSING_FAILED("5000", "JSON 파싱 도중 오류가 발생했습니다."),
+    WEAVIATE_GRAPHQL_FAILED("5001", " Weaviate 검색 도중 오류가 발생했습니다.");
 
     private final String status;
     private final String message;

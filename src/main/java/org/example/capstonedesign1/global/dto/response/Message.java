@@ -1,4 +1,4 @@
-package org.example.capstonedesign1.domain.chat.dto;
+package org.example.capstonedesign1.global.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

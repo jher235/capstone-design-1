@@ -13,7 +13,7 @@ import org.example.capstonedesign1.domain.propensity.repository.UserPropensityRe
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
 import org.example.capstonedesign1.global.dto.PaginationResponse;
-import org.example.capstonedesign1.global.exception.AuthorizedException;
+import org.example.capstonedesign1.global.exception.ForbiddenException;
 import org.example.capstonedesign1.global.exception.NotFoundException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.example.capstonedesign1.global.util.JsonUtil;
@@ -36,17 +36,17 @@ public class PropensityQueryService {
     private final UserQueryService userQueryService;
 
 
-    public SurveyResponse getSurvey(){
+    public SurveyResponse getSurvey() {
         List<PropensityQuestion> questions = propensityQuestionRepository.findAllWithOptions();
         return SurveyResponse.from(questions);
     }
 
-    public UserPropensity findUserPropensityById(UUID userPropensityId){
+    public UserPropensity findUserPropensityById(UUID userPropensityId) {
         return userPropensityRepository.findById(userPropensityId).orElseThrow(()
                 -> new NotFoundException(ErrorCode.USER_PROPENSITY_NOT_FOUND));
     }
 
-    public PaginationResponse<UserPropensityPreview> getUserPropensities(User user, int page, int size){
+    public PaginationResponse<UserPropensityPreview> getUserPropensities(User user, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Page<UserPropensityPreview> propensityPreviews =
@@ -55,10 +55,10 @@ public class PropensityQueryService {
         return PaginationResponse.from(propensityPreviews);
     }
 
-    public PropensityAnalysisResponse getUserPropensity(User user, UUID userPropensityId){
+    public PropensityAnalysisResponse getUserPropensity(User user, UUID userPropensityId) {
         UserPropensity userPropensity = findUserPropensityById(userPropensityId);
-        if(!userQueryService.isSameUser(user, userPropensity.getUser())){
-            throw new AuthorizedException(ErrorCode.UN_AUTHORIZED);
+        if (!userQueryService.isSameUser(user, userPropensity.getUser())) {
+            throw new ForbiddenException(ErrorCode.UN_AUTHORIZED);
         }
 
         PropensityAnalysis propensityAnalysis = JsonUtil.parseClass(
