@@ -26,8 +26,8 @@ public class BankProductRecommendRequest {
             maximum = "10000000000000"
     )
     @NotNull(message = "투자 금액 값은 필수입니다.")
-    @Min(value = 0, message = "투자 금액은 0원 이상이어야 합니다.")
-    @Max(value = 10_000_000_000_000L, message = "투자 금액은 1경 원을 넘을 수 없습니다.")
+    @Min(value = MIN_INVEST_AMOUNT, message = "투자 금액은 {MIN_INVEST_AMOUNT} 원 이상이어야 합니다.")
+    @Max(value = MAX_INVEST_AMOUNT, message = "투자 금액은 {MAX_INVEST_AMOUNT} 원을 넘을 수 없습니다.")
     private Long amount;
 
     @Schema(description = """
