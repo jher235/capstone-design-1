@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.capstonedesign1.domain.auth.security.CustomUserDetails;
-import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
+import org.example.capstonedesign1.domain.propensity.dto.request.PropensityAnalysisRequest;
 import org.example.capstonedesign1.domain.propensity.dto.response.PropensityAnalysisResponse;
 import org.example.capstonedesign1.domain.propensity.dto.response.SurveyResponse;
 import org.example.capstonedesign1.domain.propensity.dto.response.projection.UserPropensityPreview;
@@ -38,7 +38,7 @@ public class PropensityController {
             @ApiResponse(responseCode = "200", description = "문항 조회 성공")
     })
     @GetMapping
-    public ResponseEntity<ResponseDto<SurveyResponse>> getQuestions(){
+    public ResponseEntity<ResponseDto<SurveyResponse>> getQuestions() {
         SurveyResponse surveyResponse = propensityQueryService.getSurvey();
 
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "문항 조회 성공", surveyResponse), HttpStatus.OK);
@@ -53,8 +53,8 @@ public class PropensityController {
             @ApiResponse(responseCode = "500", description = "서버 내부에서 json 파싱 오류")
     })
     @PostMapping
-    public ResponseEntity<ResponseDto<PropensityAnalysisResponse>> postSurvey(@Valid @RequestBody SurveyRequest request,
-                                                                              @AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<ResponseDto<PropensityAnalysisResponse>> postSurvey(@Valid @RequestBody PropensityAnalysisRequest request,
+                                                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         PropensityAnalysisResponse response = propensityCommandService.submitSurvey(userDetails.getUser(), request);
 
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 성공", response), HttpStatus.OK);
@@ -70,8 +70,8 @@ public class PropensityController {
     @GetMapping("/analysis")
     public ResponseEntity<ResponseDto<PaginationResponse<UserPropensityPreview>>> getUserPropensities(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(name ="page", defaultValue = "0") int page,
-            @RequestParam(name ="size", defaultValue = "10") int size){
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PaginationResponse<UserPropensityPreview> response = propensityQueryService.getUserPropensities(userDetails.getUser(), page, size);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 목록 조회 성공", response), HttpStatus.OK);
     }
@@ -88,7 +88,7 @@ public class PropensityController {
     @GetMapping("/analysis/{userPropensityId}")
     public ResponseEntity<ResponseDto<PropensityAnalysisResponse>> getUserPropensity(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable(name = "userPropensityId") UUID userPropensityId){
+            @PathVariable(name = "userPropensityId") UUID userPropensityId) {
         PropensityAnalysisResponse response = propensityQueryService.getUserPropensity(userDetails.getUser(), userPropensityId);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "금융 성향 분석 상세 조회 성공", response), HttpStatus.OK);
     }

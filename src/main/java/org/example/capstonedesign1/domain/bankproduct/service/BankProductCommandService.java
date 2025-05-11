@@ -43,7 +43,8 @@ public class BankProductCommandService {
      * @return
      */
     public BankProductRecommendationResponse recommendBankProduct(User user, BankProductRecommendRequest request) {
-        Propensity propensity = userQueryService.ensureUserPropensity(user);
+//        Propensity propensity = userQueryService.ensureUserPropensity(user); // 현재는 요구사항 상 유저의 성향을 선택하지 않으므로 주석 처리 됨
+        Propensity propensity = request.getPropensity();
 
         List<BankProduct> bankProducts =
                 bankProductRepository.findRecommendable(propensity, request.getAmount(), request.getTerm());

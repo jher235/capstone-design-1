@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.example.capstonedesign1.domain.bankproduct.entity.enums.BankProductType;
 import org.example.capstonedesign1.global.common.BaseEntity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +27,14 @@ public class BankProduct extends BaseEntity {
     private String bankName;
     private String description;
 
-    private Double interestRate6mPct;
-    private Double interestRate12mPct;
-    private Double interestRate24mPct;
-    private Double interestRate36mPct;
+    @Column(precision = 5, scale = 3)
+    private BigDecimal interestRate6mPct;
+    @Column(precision = 5, scale = 3)
+    private BigDecimal interestRate12mPct;
+    @Column(precision = 5, scale = 3)
+    private BigDecimal interestRate24mPct;
+    @Column(precision = 5, scale = 3)
+    private BigDecimal interestRate36mPct;
 
     private Long minAmount;
     private Long maxAmount;
@@ -42,30 +47,29 @@ public class BankProduct extends BaseEntity {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("BankProduct{");
-        sb.append("id=").append(this.getId())
-                .append(", name=").append(name)
-                .append(", productType=").append(bankProductType)
-                .append(", bankName=").append(bankName)
-                .append(", description=").append(description != null ? description : "없음");
 
-        // 이자율을 간결하게 표현
-        sb.append(", interestRatePct (6/12/24/36m)=")
-                .append(String.format("[%.2f, %.2f, %.2f, %.2f]",
+        String sb = "BankProduct{" + "id=" + this.getId() +
+                ", name=" + name +
+                ", productType=" + bankProductType +
+                ", bankName=" + bankName +
+                ", description=" + (description != null ? description : "없음") +
+
+                // 이자율을 간결하게 표현
+                ", interestRatePct (6/12/24/36m)=" +
+                String.format("[%.2f, %.2f, %.2f, %.2f]",
                         interestRate6mPct != null ? interestRate6mPct : 0.0,
                         interestRate12mPct != null ? interestRate12mPct : 0.0,
                         interestRate24mPct != null ? interestRate24mPct : 0.0,
-                        interestRate36mPct != null ? interestRate36mPct : 0.0));
+                        interestRate36mPct != null ? interestRate36mPct : 0.0) +
 
-        // 최소/최대 금액과 기간
-        sb.append(", amount(won)=").append(minAmount).append(" ~ ").append(maxAmount != null ? maxAmount : "무제한")
-                .append(", term(month)=").append(minTerm != null ? minTerm : "0").append(" ~ ").append(maxTerm != null ? maxTerm : "무제한");
+                // 최소/최대 금액과 기간
+                ", amount(won)=" + minAmount + " ~ " + (maxAmount != null ? maxAmount : "무제한") +
+                ", term(month)=" + (minTerm != null ? minTerm : "0") + " ~ " + (maxTerm != null ? maxTerm : "무제한") +
+                ", eligibility=" + (eligibility != null ? eligibility : "제한 없음") +
+                ", detailUrl=" + (detailUrl != null ? detailUrl : "없음") +
+                "}";
 
-        sb.append(", eligibility=").append(eligibility != null ? eligibility : "제한 없음")
-                .append(", detailUrl=").append(detailUrl != null ? detailUrl : "없음")
-                .append("}");
-
-        return sb.toString();
+        return sb;
     }
 
 }
