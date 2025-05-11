@@ -3,7 +3,7 @@ package org.example.capstonedesign1.domain.propensity.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.capstonedesign1.domain.propensity.dto.json.PropensityAnalysis;
-import org.example.capstonedesign1.domain.propensity.dto.request.SurveyRequest;
+import org.example.capstonedesign1.domain.propensity.dto.request.PropensityAnalysisRequest;
 import org.example.capstonedesign1.domain.propensity.dto.response.PropensityAnalysisResponse;
 import org.example.capstonedesign1.domain.propensity.entity.UserPropensity;
 import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
@@ -29,10 +29,10 @@ public class PropensityCommandService {
     private final UserPropensityRepository userPropensityRepository;
     private final PropensityQueryService propensityQueryService;
 
-    public PropensityAnalysisResponse submitSurvey(User user, SurveyRequest request) {
+    public PropensityAnalysisResponse submitSurvey(User user, PropensityAnalysisRequest request) {
         String requestMessage = PromptTemplate.propensityAnalysisPrompt(
                 user.getProfile().getGender().toString(),
-                request.getSurveyEntries());
+                request.userSurveyResult());
 
         String content = openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
 
