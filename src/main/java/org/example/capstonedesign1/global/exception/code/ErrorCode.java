@@ -34,7 +34,9 @@ public enum ErrorCode {
     ALREADY_REGISTER_COMPLETED("4091", "이미 회원가입 완료한 유저입니다."),
 
     JSON_PARSING_FAILED("5000", "JSON 파싱 도중 오류가 발생했습니다."),
-    WEAVIATE_GRAPHQL_FAILED("5001", " Weaviate 검색 도중 오류가 발생했습니다.");
+    WEAVIATE_GRAPHQL_FAILED("5001", " Weaviate 검색 도중 오류가 발생했습니다."),
+    THREAD_INTERRUPT("5002", "스레드 인터럽트 오류가 발생했습니다."),
+    ASYNC_ERROR("5003", "비동기 작업 중 오류가 발생했습니다.");
 
     private final String status;
     private final String message;

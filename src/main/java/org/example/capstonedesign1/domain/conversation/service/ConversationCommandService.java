@@ -25,12 +25,17 @@ import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.example.capstonedesign1.global.openai.client.OpenAiApiClient;
 import org.example.capstonedesign1.global.openai.template.PromptTemplate;
 import org.example.capstonedesign1.global.util.JsonUtil;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+import static org.example.capstonedesign1.global.constant.ThreadPoolConstant.I_O_TASK_THREAD_POOL_NAME;
 import static org.example.capstonedesign1.global.constant.WeaviateConstant.*;
 
 
@@ -43,58 +48,63 @@ public class ConversationCommandService {
     private final CardProductQueryService cardProductQueryService;
 
     private final ConversationRepository conversationRepository;
-    private final OpenAiApiClient openAiApiClient;
 
+    private final ThreadPoolTaskExecutor taskExecutor;
+    private final OpenAiApiClient openAiApiClient;
     private final WeaviateClient weaviateClient;
 
     public ConversationResponse conversation(User user, boolean embedding, ConversationRequest request) {
         String requestMessage = request.requestMessage();
         Float[] queryVector = openAiApiClient.sendEmbeddingRequest(requestMessage);
         NearVectorArgument nearVector = getNearVector(queryVector);
+        try {
+            CompletableFuture<List<BankProduct>> bankProducts = getSimilarBankProducts(nearVector);
+            CompletableFuture<List<CardProduct>> cardProducts = getSimilarCardProducts(nearVector);
+            CompletableFuture.allOf(bankProducts, cardProducts).join();
 
-        List<BankProduct> bankProducts = getSimilarBankProducts(nearVector);
-        List<CardProduct> cardProducts = getSimilarCardProducts(nearVector);
+            String prompt = PromptTemplate.conversationPrompt(requestMessage, Optional.ofNullable(request.summary()),
+                    bankProducts.get(), cardProducts.get());
+            String response = openAiApiClient.sendRequest(List.of(new Message(OpenAiApiClient.SYSTEM_ROLE, prompt)));
+            ConversationResponseContent content = JsonUtil.parseClass(ConversationResponseContent.class, response);
 
-        String prompt = PromptTemplate.conversationPrompt(requestMessage,
-                Optional.ofNullable(request.summary()),
-                bankProducts, cardProducts);
-        log.info(prompt);
-
-        String response = openAiApiClient.sendRequest(List.of(new Message(OpenAiApiClient.SYSTEM_ROLE, prompt)));
-        ConversationResponseContent content = JsonUtil.parseClass(ConversationResponseContent.class, response);
-
-        Conversation conversation = new Conversation(user, requestMessage, content.message(), content.summary());
-        conversationRepository.save(conversation);
-        return ConversationResponse.from(conversation);
-    }
-
-
-    private List<BankProduct> getSimilarBankProducts(NearVectorArgument nearVector) {
-        Field idField = getField(WEAVIATE_BANK_PRODUCT_ID);
-        Field additionalField = getAdditionalField();
-
-        Result<GraphQLResponse> result = weaviateClient.graphQL().get()
-                .withClassName(WEAVIATE_BANK_PRODUCT_COLLECTION)
-                .withNearVector(nearVector)
-                .withFields(idField, additionalField)
-                .withLimit(WEAVIATE_MAX_COUNT_SIMILAR_BANK_PRODUCT)
-                .run();
-
-        if (result.hasErrors()) {
-            throw new InternalServerException(ErrorCode.WEAVIATE_GRAPHQL_FAILED, result.getError().getMessages().toString());
+            Conversation conversation = new Conversation(user, requestMessage, content.message(), content.summary());
+            conversationRepository.save(conversation);
+            return ConversationResponse.from(conversation);
+        } catch (ExecutionException e) {
+            throw new InternalServerException(ErrorCode.ASYNC_ERROR, e.getMessage());
+        } catch (InterruptedException e) {
+            throw new InternalServerException(ErrorCode.THREAD_INTERRUPT, e.getMessage());
         }
-
-        WeaviateVectorSimilarResponse weaviateVectorSimilarResponse = convertFromGson(WeaviateVectorSimilarResponse.class, result);
-
-        List<UUID> bankProductIds = weaviateVectorSimilarResponse.getResult().getBankProductInfos().stream()
-                .map(WeaviateVectorSimilarResponse.ResultBankProductData::getBankProductId)
-                .toList();
-
-        return bankProductQueryService.findByIds(bankProductIds);
     }
 
+    public CompletableFuture<List<BankProduct>> getSimilarBankProducts(NearVectorArgument nearVector) {
+        return CompletableFuture.supplyAsync(() -> {
+            Field idField = getField(WEAVIATE_BANK_PRODUCT_ID);
+            Field additionalField = getAdditionalField();
 
-    private List<CardProduct> getSimilarCardProducts(NearVectorArgument nearVector) {
+            Result<GraphQLResponse> result = weaviateClient.graphQL().get()
+                    .withClassName(WEAVIATE_BANK_PRODUCT_COLLECTION)
+                    .withNearVector(nearVector)
+                    .withFields(idField, additionalField)
+                    .withLimit(WEAVIATE_MAX_COUNT_SIMILAR_BANK_PRODUCT)
+                    .run();
+
+            if (result.hasErrors()) {
+                throw new InternalServerException(ErrorCode.WEAVIATE_GRAPHQL_FAILED, result.getError().getMessages().toString());
+            }
+
+            WeaviateVectorSimilarResponse weaviateVectorSimilarResponse = convertFromGson(WeaviateVectorSimilarResponse.class, result);
+
+            List<UUID> bankProductIds = weaviateVectorSimilarResponse.getResult().getBankProductInfos().stream()
+                    .map(WeaviateVectorSimilarResponse.ResultBankProductData::getBankProductId)
+                    .toList();
+
+            return bankProductQueryService.findByIds(bankProductIds);
+        }, taskExecutor);
+    }
+
+    @Async(I_O_TASK_THREAD_POOL_NAME)
+    public CompletableFuture<List<CardProduct>> getSimilarCardProducts(NearVectorArgument nearVector) {
         Field idField = getField(WEAVIATE_CARD_PRODUCT_ID);
         Field additionalField = getAdditionalField();
 
@@ -115,7 +125,7 @@ public class ConversationCommandService {
                 .map(WeaviateVectorSimilarResponse.ResultCardProductData::getCardProductId)
                 .toList();
 
-        return cardProductQueryService.findByIds(cardProductIds);
+        return CompletableFuture.completedFuture(cardProductQueryService.findByIds(cardProductIds));
     }
 
     private Field getField(String fieldName) {
