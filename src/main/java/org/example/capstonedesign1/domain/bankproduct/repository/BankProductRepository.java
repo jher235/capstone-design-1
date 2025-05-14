@@ -15,7 +15,7 @@ public interface BankProductRepository extends JpaRepository<BankProduct, UUID> 
     @Query("select bp " +
             "from BankProduct bp " +
             "inner join BankProductPropensity bpp on bp = bpp.bankProduct and bpp.propensity = :propensity " +
-            "where bp.minAmount <= :amount and bp.minTerm <= :term ")
+            "where bp.minAmount <= :amount and (bp.minTerm <= :term or bp.minTerm is null) ")
     List<BankProduct> findRecommendable(@Param("propensity") Propensity propensity,
                                         @Param("amount") Long amount,
                                         @Param("term") Integer term);

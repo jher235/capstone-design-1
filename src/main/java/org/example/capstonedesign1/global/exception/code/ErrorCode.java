@@ -29,6 +29,7 @@ public enum ErrorCode {
     USER_PROPENSITY_NOT_FOUND("4041", "금융 성향 분석을 찾을 수 없습니다."),
     BANK_PRODUCT_RECOMMENDATION_NOT_FOUND("4042", "금융 상품 추천 결과를 찾을 수 없습니다."),
     CARD_PRODUCT_RECOMMENDATION_NOT_FOUND("4043", "카드 상품 추천 결과를 찾을 수 없습니다."),
+    CONVERSATION_NOT_FOUND("4044", "대화를 찾을 수 없습니다."),
 
     CONFLICT_EMAIL("4090", "중복된 이메일입니다."),
     ALREADY_REGISTER_COMPLETED("4091", "이미 회원가입 완료한 유저입니다."),
