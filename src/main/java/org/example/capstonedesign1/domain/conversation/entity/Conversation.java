@@ -1,9 +1,6 @@
 package org.example.capstonedesign1.domain.conversation.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +12,9 @@ import org.example.capstonedesign1.global.common.BaseEntity;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {
+        @Index(name = "idx_user_createdat", columnList = "user_id, created_at")
+})
 public class Conversation extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
