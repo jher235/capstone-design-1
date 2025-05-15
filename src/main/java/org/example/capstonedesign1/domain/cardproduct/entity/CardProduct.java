@@ -32,19 +32,20 @@ public class CardProduct extends BaseEntity {
 	@Column(length = 1000)
 	private String benefit;
 	private String detailUrl;
+	private String imageUrl;
 
 	@Override
 	public String toString() {
-
 		String sb = "CardProduct{" + "id=" + this.getId()
 			+ ", name=" + name
 			+ ", type=" + cardProductType
 			+ ", bankName=" + bankName
-			+ (this.description != null ? ", description=" + description : "")
+			+ ", description=" + description
 			+ ", annualFee=" + (this.annualFee != null ? annualFee : 0)
-			+ (this.benefit != null ? ", benefit=" + benefit : "")
-			+ (this.detailUrl != null ? ", detailUrl=" + detailUrl : "");
-
+			+ ", benefit=" + benefit
+			+ ", detailUrl=" + detailUrl
+			+ ", imageUrl=" + imageUrl
+			+ "}";
 		return sb;
 	}
 }
