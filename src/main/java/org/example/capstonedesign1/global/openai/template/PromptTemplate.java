@@ -183,7 +183,81 @@ public class PromptTemplate {
 		);
 	}
 
-	public static String CardProductRecommendPrompt(User user, String paymentRecord, List<CardProduct> products) {
+	public static String consumeAnalysisPrompt(String categories, String consumptionRecord) {
+		return fillTemplate(
+			"""
+				## 명령
+				사용자의 최근 결제 내역을 분석하여 가장 소비 내역이 많은 카테고리를 3개 찾아주고
+				소비 내역을 분석 및 요약해줘.
+								
+				## 카테고리 목록은 아래와 같아.
+				%s
+								
+				## 사용자의 최근 결제 내역
+				%s			
+
+				""".formatted(
+				categories,
+				consumptionRecord
+			),
+			"""
+				{
+				  "category": [
+					 "<카테고리 목록에 존재하는 카테고리중 소비율이 가장 높은 Top3>"
+				  ],
+				  "analysis": "<소비 내역 분석 및 요약>"
+				}
+				"""
+		);
+	}
+
+	public static String cardProductRecommendPrompt(String consumeAnalysis, List<CardProduct> products) {
+
+		StringBuilder stringBuilder = new StringBuilder();
+		products.stream()
+			.forEach(product -> stringBuilder.append(product.toString()).append("\n\n"));
+		return fillTemplate(
+			"""
+				## 명령
+				사용자의 최근 결제 내역 요약을 고려하여 카드 상품을 추천해줘.
+				카드 상품 목록은 DB 내의 사용자의 소비 카테고리와 일치하는 상품들을 분류해놓은 거야.
+				결과는 JSON 형식으로 반환해줘. 결과에서 recommendations 목록은 1 ~ 3개까지 넣어줘
+
+				## 사용자 정보
+				금융 성향: %s
+				성별: %s
+				만 나이: %s
+				월 수입: %s
+				자산: %s
+				                
+				## 사용자의 최근 결제 내역
+				%s
+				                
+				## 카드 상품 목록
+				%s
+
+				""".formatted(
+				consumeAnalysis,
+				stringBuilder
+			),
+			"""
+				{
+				  "recommendations": [
+				    {
+				      "id": "<카드 상품 ID>",
+				      "description": "<카드 상품 설명>",
+				      "reason": "<추천 이유 및 장단점>",
+				      "detailUrl": "<상세 URL>",
+				      "imageUrl": "<카드 이미지 URL>"
+				    }
+				  ],
+				  "strategy": "<종합적인 상품 추천 이유 및 전략 설명>"
+				}
+				"""
+		);
+	}
+
+	public static String cardProductRecommendPrompt(User user, String paymentRecord, List<CardProduct> products) {
 		Profile profile = user.getProfile();
 		StringBuilder stringBuilder = new StringBuilder();
 		products.stream()
