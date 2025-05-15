@@ -2,10 +2,13 @@ package org.example.capstonedesign1.domain.conversation.dto.response;
 
 import org.example.capstonedesign1.domain.conversation.entity.Conversation;
 
-public record ConversationResponse(String responseMessage,
+import java.util.UUID;
+
+public record ConversationResponse(UUID conversationId,
+                                   String responseMessage,
                                    String summary) {
 
     public static ConversationResponse from(Conversation conversation) {
-        return new ConversationResponse(conversation.getResponseMessage(), conversation.getSummary());
+        return new ConversationResponse(conversation.getId(), conversation.getResponseMessage(), conversation.getSummary());
     }
 }
