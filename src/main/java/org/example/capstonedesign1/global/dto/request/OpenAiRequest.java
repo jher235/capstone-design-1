@@ -1,16 +1,20 @@
 package org.example.capstonedesign1.global.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.util.List;
+
 import org.example.capstonedesign1.global.dto.response.Message;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class OpenAiRequest {
-    private String model;
-    private List<Message> messages;
-    private int max_tokens;
-    private double temperature;
+	private String model;
+	private List<Message> messages;
+	@JsonProperty("max_tokens")
+	private int maxTokens;
+	private double temperature;
 }

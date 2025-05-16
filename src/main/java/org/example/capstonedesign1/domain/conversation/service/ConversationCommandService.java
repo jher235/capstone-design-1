@@ -68,8 +68,8 @@ public class ConversationCommandService {
             ConversationResponseContent content = JsonUtil.parseClass(ConversationResponseContent.class, response);
 
             Conversation conversation = new Conversation(user, requestMessage, content.message(), content.summary());
-            conversationRepository.save(conversation);
-            return ConversationResponse.from(conversation);
+            Conversation savedConversation = conversationRepository.save(conversation);
+            return ConversationResponse.from(savedConversation);
         } catch (ExecutionException e) {
             throw new InternalServerException(ErrorCode.ASYNC_ERROR, e.getMessage());
         } catch (InterruptedException e) {
