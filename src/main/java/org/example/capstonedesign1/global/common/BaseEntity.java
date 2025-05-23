@@ -14,14 +14,14 @@ import java.util.UUID;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "uuid2")
-    @Column(updatable = false, unique = true, nullable = false)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "uuid2")
+	@Column(updatable = false, unique = true, nullable = false)
+	private UUID id;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+	@CreatedDate
+	private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+	@LastModifiedDate
+	private LocalDateTime updatedAt;
 }
