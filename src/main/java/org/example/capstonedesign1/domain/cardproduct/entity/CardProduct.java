@@ -29,7 +29,7 @@ public class CardProduct extends BaseEntity {
 	private String bankName;
 	private String description;
 	private Integer annualFee;
-	@Column(length = 1000)
+	@Column(length = 3000)
 	private String benefit;
 	private String detailUrl;
 	private String imageUrl;
