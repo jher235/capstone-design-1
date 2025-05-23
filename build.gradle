@@ -51,7 +51,7 @@ dependencies {
 
     //weaviateClient
     // https://mvnrepository.com/artifact/io.weaviate/client
-    implementation 'io.weaviate:client:4.5.1'
+    implementation 'io.weaviate:client:5.2.1'
 
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
 //    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.14.2'
