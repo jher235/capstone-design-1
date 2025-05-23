@@ -1,6 +1,6 @@
 package org.example.capstonedesign1.domain.bankproduct.service;
 
-import static org.example.capstonedesign1.global.openai.client.OpenAiApiClient.*;
+import static org.example.capstonedesign1.global.openai.client.OpenAiClient.*;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import org.example.capstonedesign1.domain.propensity.entity.enums.Propensity;
 import org.example.capstonedesign1.domain.user.entity.User;
 import org.example.capstonedesign1.domain.user.service.UserQueryService;
 import org.example.capstonedesign1.global.dto.response.Message;
-import org.example.capstonedesign1.global.openai.client.OpenAiApiClient;
+import org.example.capstonedesign1.global.openai.client.OpenAiClient;
 import org.example.capstonedesign1.global.openai.template.PromptTemplate;
 import org.example.capstonedesign1.global.util.JsonUtil;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class BankProductCommandService {
 	private final BankProductRepository bankProductRepository;
 	private final BankProductRecommendationRepository bankProductRecommendationRepository;
 
-	private final OpenAiApiClient openAiApiClient;
+	private final OpenAiClient openAiClient;
 
 	/**
 	 * 유저의 성향, 추천 요구사항에 맞는 상품 목록들을 DB에서 가져온 후 유저 정보와 금융 상품 목록을 바탕으로 금융 상품 추천 진행
@@ -51,7 +51,7 @@ public class BankProductCommandService {
 			bankProductRepository.findRecommendable(propensity, request.getAmount(), request.getTerm());
 
 		String requestMessage = PromptTemplate.bankProductRecommendPrompt(user, request, bankProducts);
-		String content = openAiApiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
+		String content = openAiClient.sendRequest(List.of(new Message(SYSTEM_ROLE, requestMessage)));
 
 		BankProductRecommendationContent bankProductRecommendationContent =
 			JsonUtil.parseClass(BankProductRecommendationContent.class, content);

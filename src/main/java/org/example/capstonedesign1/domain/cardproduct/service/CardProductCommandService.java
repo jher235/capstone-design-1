@@ -27,7 +27,7 @@ import org.example.capstonedesign1.global.dto.response.Message;
 import org.example.capstonedesign1.global.exception.BadRequestException;
 import org.example.capstonedesign1.global.exception.ForbiddenException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
-import org.example.capstonedesign1.global.openai.client.OpenAiApiClient;
+import org.example.capstonedesign1.global.openai.client.OpenAiClient;
 import org.example.capstonedesign1.global.openai.template.PromptTemplate;
 import org.example.capstonedesign1.global.util.JsonUtil;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class CardProductCommandService {
 	private final CardProductRepository cardProductRepository;
 	private final CardProductRecommendationRepository cardProductRecommendationRepository;
 
-	private final OpenAiApiClient openAiApiClient;
+	private final OpenAiClient openAiClient;
 
 	public CardProductRecommendationResponse recommendCardProduct(User user, MultipartFile file) {
 		List<Category> categories = categoryQueryService.getAllCategory();
@@ -82,7 +82,7 @@ public class CardProductCommandService {
 			cardProducts.subList(0, Math.min(cardProducts.size(), MAX_RECOMMENDABLE_CARD_PRODUCT_COUNT));
 
 		String prompt = PromptTemplate.cardProductRecommendPrompt(consumptionAnalysis, recommendableCardProducts);
-		String response = openAiApiClient.sendRequest(List.of(new Message(OpenAiApiClient.SYSTEM_ROLE, prompt)));
+		String response = openAiClient.sendRequest(List.of(new Message(OpenAiClient.SYSTEM_ROLE, prompt)));
 
 		return JsonUtil.parseClass(CardProductRecommendationContent.class, response);
 	}
@@ -91,7 +91,7 @@ public class CardProductCommandService {
 		validXlsxFile(file);
 		String consumptionRecord = resolveConsumptionRecord(user, file);
 		String prompt = PromptTemplate.consumeAnalysisPrompt(getAllCategoryNameToString(), consumptionRecord);
-		String response = openAiApiClient.sendRequest(List.of(new Message(OpenAiApiClient.SYSTEM_ROLE, prompt)));
+		String response = openAiClient.sendRequest(List.of(new Message(OpenAiClient.SYSTEM_ROLE, prompt)));
 
 		return JsonUtil.parseClass(ConsumptionAnalysis.class, response);
 	}
