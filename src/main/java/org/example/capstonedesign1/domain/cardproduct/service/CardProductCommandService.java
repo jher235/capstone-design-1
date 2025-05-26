@@ -55,25 +55,24 @@ public class CardProductCommandService {
 	public CardProductRecommendationResponse recommendCardProduct(User user, MultipartFile file) {
 		List<Category> categories = categoryQueryService.getAllCategory();
 
-		ConsumptionAnalysis consumptionAnalysis = getConsumeAnalysis(user, file, categories);
+		ConsumptionAnalysis consumptionAnalysis = getConsumeAnalysis(user, file, filePassword);
 
-		List<Category> categoryList = getConsumedCategory(categories, consumptionAnalysis.categoryNames());
-		List<CardProduct> recommendableCardProducts = cardProductRepository.findByCategoryList(categoryList);
+		List<Category> categoryList = getConsumedCategory(categories, consumptionAnalysis.category());
+		List<CardProduct> recommendableCardProducts = cardProductRepository.findByCategoryList(categoryList,
+			PageRequest.ofSize(MAX_RECOMMENDABLE_CARD_PRODUCT_COUNT));
 
 		CardProductRecommendationContent content =
-			recommendFromProductsAndAnalysis(consumptionAnalysis.analysis(), recommendableCardProducts);
+			recommendFromProductsAndAnalysis(user, consumptionAnalysis.analysis(), recommendableCardProducts);
 		String recommendationJson = JsonUtil.convertToJson(content.recommendations());
 
-		CardProductRecommendation cardProductRecommendation = CardProductRecommendation.builder()
-			.user(user)
-			.consumptionAnalysis(consumptionAnalysis.analysis())
-			.strategy(content.strategy())
-			.content(recommendationJson)
-			.build();
-
 		CardProductRecommendation savedRecommendation = cardProductRecommendationRepository.save(
-			cardProductRecommendation);
-		return CardProductRecommendationResponse.from(savedRecommendation);
+			CardProductRecommendation.builder()
+				.user(user)
+				.consumptionAnalysis(consumptionAnalysis.analysis())
+				.strategy(content.strategy())
+				.content(recommendationJson)
+				.build());
+		return CardProductRecommendationResponse.of(savedRecommendation, content.recommendations());
 	}
 
 	private CardProductRecommendationContent recommendFromProductsAndAnalysis(

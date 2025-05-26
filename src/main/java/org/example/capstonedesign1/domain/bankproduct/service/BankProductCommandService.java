@@ -61,7 +61,8 @@ public class BankProductCommandService {
 		BankProductRecommendation recommendation = new BankProductRecommendation(
 			user, bankProductRecommendationContent.strategy(), recommendationJson);
 		bankProductRecommendationRepository.save(recommendation);
-		return BankProductRecommendationResponse.from(recommendation);
+		return BankProductRecommendationResponse.of(recommendation.getId(), recommendation.getCreatedAt(),
+			bankProductRecommendationContent);
 	}
 
 }
