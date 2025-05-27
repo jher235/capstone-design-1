@@ -57,7 +57,8 @@ public class ConversationCommandService {
 			CompletableFuture<List<CardProduct>> cardProducts = getSimilarCardProducts(nearVector);
 			CompletableFuture.allOf(bankProducts, cardProducts).join();
 
-			String prompt = PromptTemplate.conversationPrompt(requestMessage, Optional.ofNullable(request.summary()),
+			String prompt = PromptTemplate.conversationPrompt(user, requestMessage,
+				Optional.ofNullable(request.summary()),
 				bankProducts.get(), cardProducts.get());
 			String response = openAiClient.sendRequest(List.of(new Message(OpenAiClient.SYSTEM_ROLE, prompt)));
 			ConversationResponseContent content = JsonUtil.parseClass(ConversationResponseContent.class, response);
