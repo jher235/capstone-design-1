@@ -21,12 +21,13 @@ public class CardProductRecommendation extends BaseEntity {
 	@JoinColumn(name = "user_id", nullable = false)
 	User user;
 
+	@Column(length = 1000)
 	private String strategy;
 
 	@Column(nullable = false, columnDefinition = "JSON")
 	private String content;
 
-	@Column(length = 500)
+	@Column(length = 1000)
 	private String consumptionAnalysis;
 
 	@Builder
