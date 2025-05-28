@@ -24,7 +24,7 @@ import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.example.capstonedesign1.global.openai.client.OpenAiClient;
 import org.example.capstonedesign1.global.openai.template.PromptTemplate;
 import org.example.capstonedesign1.global.util.JsonUtil;
-import org.example.capstonedesign1.global.weaviate.service.WeaviateService;
+import org.example.capstonedesign1.global.weaviate.WeaviateHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class ConversationCommandService {
 
 	private final BankProductQueryService bankProductQueryService;
 	private final CardProductQueryService cardProductQueryService;
-	private final WeaviateService weaviateService;
+	private final WeaviateHandler weaviateHandler;
 
 	private final ConversationRepository conversationRepository;
 
@@ -57,7 +57,8 @@ public class ConversationCommandService {
 			CompletableFuture<List<CardProduct>> cardProducts = getSimilarCardProducts(nearVector);
 			CompletableFuture.allOf(bankProducts, cardProducts).join();
 
-			String prompt = PromptTemplate.conversationPrompt(requestMessage, Optional.ofNullable(request.summary()),
+			String prompt = PromptTemplate.conversationPrompt(user, requestMessage,
+				Optional.ofNullable(request.summary()),
 				bankProducts.get(), cardProducts.get());
 			String response = openAiClient.sendRequest(List.of(new Message(OpenAiClient.SYSTEM_ROLE, prompt)));
 			ConversationResponseContent content = JsonUtil.parseClass(ConversationResponseContent.class, response);
@@ -74,14 +75,14 @@ public class ConversationCommandService {
 
 	public CompletableFuture<List<BankProduct>> getSimilarBankProducts(NearVectorArgument nearVector) {
 		return CompletableFuture.supplyAsync(() -> {
-			List<UUID> bankProductIds = weaviateService.getSimilarBankProduct(nearVector);
+			List<UUID> bankProductIds = weaviateHandler.getSimilarBankProduct(nearVector);
 			return bankProductQueryService.findByIds(bankProductIds);
 		}, taskExecutor);
 	}
 
 	@Async(I_O_TASK_THREAD_POOL_NAME)
 	public CompletableFuture<List<CardProduct>> getSimilarCardProducts(NearVectorArgument nearVector) {
-		List<UUID> cardProductIds = weaviateService.getSimilarCardProduct(nearVector);
+		List<UUID> cardProductIds = weaviateHandler.getSimilarCardProduct(nearVector);
 		return CompletableFuture.completedFuture(cardProductQueryService.findByIds(cardProductIds));
 	}
 

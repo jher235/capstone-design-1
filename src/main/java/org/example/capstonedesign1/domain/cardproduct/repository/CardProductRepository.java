@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.example.capstonedesign1.domain.cardproduct.entity.CardProduct;
 import org.example.capstonedesign1.domain.cardproduct.entity.Category;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,11 +17,11 @@ public interface CardProductRepository extends JpaRepository<CardProduct, UUID> 
 	@Query("""
 		select distinct cp
 		from CardProduct cp
-		inner join CardProductCategory cpc
+		inner join cp.cardProductCategories cpc
 		where  cpc.category in :categories
 		group by cp.id
 		order by count(cpc)
 		""")
-	List<CardProduct> findByCategoryList(@Param("categories") List<Category> categories);
+	List<CardProduct> findByCategoryList(@Param("categories") List<Category> categories, Pageable pageable);
 
 }

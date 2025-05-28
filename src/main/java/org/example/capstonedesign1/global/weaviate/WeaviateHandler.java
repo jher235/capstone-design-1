@@ -1,4 +1,4 @@
-package org.example.capstonedesign1.global.weaviate.service;
+package org.example.capstonedesign1.global.weaviate;
 
 import static org.example.capstonedesign1.global.constant.WeaviateConstant.*;
 
@@ -15,7 +15,7 @@ import org.example.capstonedesign1.global.exception.InternalServerException;
 import org.example.capstonedesign1.global.exception.code.ErrorCode;
 import org.example.capstonedesign1.global.openai.client.OpenAiClient;
 import org.example.capstonedesign1.global.util.JsonUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
@@ -33,9 +33,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@Service
+@Component
 @RequiredArgsConstructor
-public class WeaviateService {
+public class WeaviateHandler {
 
 	private final WeaviateClient weaviateClient;
 	private final OpenAiClient openAiClient;
